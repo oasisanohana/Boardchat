@@ -24,17 +24,16 @@
             overflow: hidden;
             border: 1px solid #ffe4e1;
         }
-        .image-container {
+        .video-container {
             width: 100%;
             height: 320px;
-            overflow: hidden;
-            background-color: #fff0f5;
+            background-color: #000;
             position: relative;
         }
-        .love-image {
+        .love-video {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* จัดให้รูปภาพพอดีกล่องสวยงาม */
+            object-fit: cover; /* จัดให้วิดีโอเต็มกล่องสวยงามพอดี */
         }
         .card-body {
             padding: 35px 30px;
@@ -50,7 +49,7 @@
             color: #555;
             line-height: 1.8;
             font-size: 1.05rem;
-            white-space: pre-line; /* ทำให้เว้นบรรทัดตามที่พิมพ์ในโค้ดได้ง่าย */
+            white-space: pre-line;
         }
         .back-link {
             display: inline-block;
@@ -69,16 +68,19 @@
 <body>
 
     <div class="content-card">
-        <!-- 📸 ส่วนใส่รูปภาพ: สามารถเปลี่ยน picture.jpg เป็นชื่อไฟล์รูปของคุณได้เลยค่ะ -->
-        <!-- หรือถ้าอยากทดสอบก่อน สามารถใช้ลิงก์ตัวอย่างนี้ได้เลยค่ะ -->
-        <div class="image-container">
-            <img src="picture.jpg" alt="รูปภาพของเรา" class="love-image" onerror="this.src='https://picsum.photos/500/350'">
+        <!-- 🎬 ส่วนแสดงวิดีโอ -->
+        <div class="video-container">
+            <!-- เปลี่ยนชื่อ vdo.mp4 เป็นชื่อไฟล์วิดีโอของคุณได้เลยค่ะ -->
+            <!-- controls = ให้มีปุ่มกดเพลย์/ปรับเสียง, loop = เล่นวนซ้ำ -->
+            <video class="love-video" controls loop>
+                <source src="vdo.mp4" type="video/mp4">
+                เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
+            </video>
         </div>
         
         <div class="card-body">
             <h2>ความในใจจากบี๋ซัง 💌</h2>
             
-            <!-- ✍️ เขียนข้อความตรงนี้ได้ตามใจชอบเลยนะคะ สามารถขึ้นบรรทัดใหม่ได้เลย -->
             <p class="love-text">
                 ขอบคุณที่อยู่ข้างกันเสมอนะคะ 
                 รักเธอที่สุดในโลกเลยยยย 
@@ -86,7 +88,6 @@
                 งอนกันบ้างทะเลาะกันบ้างแต่ก็รักเหมือนเดิมนะบี๋! 🧸💖
             </p>
             
-            <!-- ปุ่มกดปิดกล่อง/กลับหน้าแรก -->
             <a href="index.html" class="back-link">🔒 ปิดกล่องรัก</a>
         </div>
     </div>
