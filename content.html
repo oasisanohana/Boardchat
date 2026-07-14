@@ -24,16 +24,17 @@
             overflow: hidden;
             border: 1px solid #ffe4e1;
         }
-        .video-container {
+        .image-container {
             width: 100%;
             height: 320px;
-            background-color: #000;
+            overflow: hidden;
+            background-color: #fff0f5;
             position: relative;
         }
-        .love-video {
+        .love-image {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* จัดให้วิดีโอเต็มกล่องสวยงามพอดี */
+            object-fit: cover; /* จัดให้รูปภาพเต็มกล่องสวยงามพอดี */
         }
         .card-body {
             padding: 35px 30px;
@@ -68,22 +69,19 @@
 <body>
 
     <div class="content-card">
-        <!-- 🎬 ส่วนแสดงวิดีโอ -->
-        <div class="video-container">
-            <!-- บี๋เปลี่ยนชื่อไฟล์ตรงนี้เป็นภาษาอังกฤษ love.mp4 ให้แล้วนะคะ -->
-            <video class="love-video" controls loop>
-                <source src="love.mp4" type="video/mp4">
-                เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
-            </video>
+        <!-- 📸 ส่วนแสดงรูปภาพ -->
+        <div class="image-container">
+            <!-- บี๋ตั้งชื่อไฟล์รูปในโค้ดว่า love.jpg เป็นภาษาอังกฤษเรียบร้อยค่ะ -->
+            <img src="love.jpg" alt="รูปภาพของเรา" class="love-image">
         </div>
         
         <div class="card-body">
             <h2>ความในใจจากบี๋ซัง 💌</h2>
             
             <p class="love-text">
-                ขอบคุณที่ไม่ปล่อยมือไปไหน 
-                รักบี๋ที่สุดในโลกเลยยยย 
-                ขอให้บี๋มีความสุขและยิ้มได้เยอะๆ ในทุกๆ วันน้าา 
+                ขอบคุณที่อยู่ข้างกันเสมอนะคะ 
+                รักเธอที่สุดในโลกเลยยยย 
+                ขอให้เรามีความสุขและยิ้มได้เยอะๆ ในทุกๆ วันนะ 
                 งอนกันบ้างทะเลาะกันบ้างแต่ก็รักเหมือนเดิมนะบี๋! 🧸💖
             </p>
             
