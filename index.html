@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Anniversary ❤️</title>
+    <!-- นำเข้า Tailwind CSS และฟอนต์น่ารักๆ -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Itim', cursive; }
+    </style>
+</head>
+<body class="bg-pink-50 text-gray-700 min-h-screen flex flex-col justify-between">
+
+    <!-- 🌸 ส่วนหัวและเมนูนำทาง (Navigation Bar) -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-md mx-auto flex justify-around py-4">
+            <button onclick="switchPage('home')" class="nav-btn text-pink-500 font-bold text-lg hover:scale-105 transition">🏠 หน้าแรก</button>
+            <button onclick="switchPage('gallery')" class="nav-btn text-gray-500 font-bold text-lg hover:scale-105 transition">📸 ความทรงจำ</button>
+            <button onclick="switchPage('letter')" class="nav-btn text-gray-500 font-bold text-lg hover:scale-105 transition">💌 ความในใจ</button>
+        </div>
+    </header>
+
+    <!-- 📦 ส่วนเนื้อหาหลัก (Main Content) -->
+    <main class="max-w-md mx-auto flex-grow p-6 w-full">
+        
+        <!-- 🏠 หน้าที่ 1: หน้าแรก (Home) -->
+        <section id="home" class="page-content space-y-6 text-center animate-fade-in">
+            <h1 class="text-3xl font-bold text-pink-600 mt-4">Happy Anniversary!</h1>
+            <p class="text-xl text-gray-500">ยินดีด้วยกับอีกหนึ่งปีที่น่ารักของเรานะ</p>
+            
+            <!-- ใส่รูปคู่หลักตรงนี้ -->
+            <div class="overflow-hidden rounded-2xl shadow-lg border-4 border-white">
+                <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500" alt="รูปคู่ของเรา" class="w-full h-64 object-cover">
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm">
+                <p class="text-lg">"ขอบคุณที่อยู่ข้างกันและคอยเป็นความสุขให้กันเสมอนะคะ"</p>
+            </div>
+        </section>
+
+        <!-- 📸 หน้าที่ 2: ความทรงจำ (Gallery) -->
+        <section id="gallery" class="page-content space-y-6 hidden">
+            <h2 class="text-2xl font-bold text-pink-600 text-center">Our Memories</h2>
+            <p class="text-center text-gray-500 -mt-4">รูปถ่ายและเรื่องราวที่เราชอบที่สุด</p>
+
+            <!-- กล่องความทรงจำที่ 1 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500" alt="เดทแรก" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <span class="text-sm text-pink-400 font-bold">📍 เดทแรกของเรา</span>
+                    <p class="text-gray-600 mt-1">จำได้ไหมวันนั้นที่ไปกินไอศกรีมด้วยกันครั้งแรก ตื่นเต้นจนทำช้อนตกเลยล่ะ ฮ่าๆ</p>
+                </div>
+            </div>
+
+            <!-- กล่องความทรงจำที่ 2 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500" alt="ทริปแรก" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <span class="text-sm text-pink-400 font-bold">🏖️ ทริปทะเลครั้งแรก</span>
+                    <p class="text-gray-600 mt-1">วันที่ไปดูพระอาทิตย์ตกดินด้วยกัน ลมเย็นๆ กับมือที่จับกันไว้ มันดีที่สุดเลย</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 💌 หน้าที่ 3: ความในใจ (Letter) -->
+        <section id="letter" class="page-content space-y-6 hidden">
+            <h2 class="text-2xl font-bold text-pink-600 text-center">ถึง...คนเก่งของเค้า</h2>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-pink-400 space-y-4">
+                <p>เธอขา...</p>
+                <p class="indent-8 leading-relaxed">
+                    อยากบอกว่าขอบคุณมาก ๆ เลยนะสำหรับทุกอย่างที่ผ่านมา ขอบคุณที่เป็นทั้งแฟน เป็นทั้งเพื่อน และเป็นเซฟโซนที่ดีที่สุดให้เค้าเสมอ เวลาที่เธอหัวเราะน่ะน่ารักที่สุดในโลกเลยรู้ไหม
+                </p>
+                <p class="indent-8 leading-relaxed">
+                    ปีนี้และปีต่อ ๆ ไป ก็ขอให้เราจับมือกันแน่น ๆ แบบนี้ เรียนรู้และเติบโตไปด้วยกันนะ เค้ารักเธอที่สุดในโลกเลยค่ะ ❤️
+                </p>
+                <p class="text-right font-bold text-pink-500 mt-4">จาก...ที่รักของเธอ</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 🎵 ส่วนท้าย (Footer) -->
+    <footer class="text-center py-4 text-xs text-gray-400">
+        Made with ❤️ for you
+    </footer>
+
+    <!-- 🛠️ JavaScript สำหรับควบคุมการเปลี่ยนหน้า -->
+    <script>
+        function switchPage(pageId) {
+            // ซ่อนทุกหน้าก่อน
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+            // แสดงเฉพาะหน้าที่เลือก
+            document.getElementById(pageId).classList.remove('hidden');
+
+            // เปลี่ยนสีปุ่มเมนูให้รู้ว่าอยู่หน้าไหน
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-pink-500');
+                btn.classList.add('text-gray-500');
+            });
+            event.target.classList.remove('text-gray-500');
+            event.target.classList.add('text-pink-500');
+        }
+    </script>
+</body>
+</html>
