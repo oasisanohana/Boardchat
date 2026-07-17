@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Anniversary ❤️</title>
+    <title>Our Special Anniversary ❤️</title>
     <!-- นำเข้า Tailwind CSS และฟอนต์น่ารักๆ -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
@@ -11,99 +11,107 @@
         body { font-family: 'Itim', cursive; }
     </style>
 </head>
-<body class="bg-pink-50 text-gray-700 min-h-screen flex flex-col justify-between">
+<body class="bg-pink-50 text-gray-700 min-h-screen flex flex-col items-center justify-center p-6">
 
-    <!-- 🌸 ส่วนหัวและเมนูนำทาง (Navigation Bar) -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="max-w-md mx-auto flex justify-around py-4">
-            <button onclick="switchPage('home')" class="nav-btn text-pink-500 font-bold text-lg hover:scale-105 transition">🏠 หน้าแรก</button>
-            <button onclick="switchPage('gallery')" class="nav-btn text-gray-500 font-bold text-lg hover:scale-105 transition">📸 ความทรงจำ</button>
-            <button onclick="switchPage('letter')" class="nav-btn text-gray-500 font-bold text-lg hover:scale-105 transition">💌 ความในใจ</button>
-        </div>
-    </header>
+    <!-- 🌸 หัวข้อหลักกลางหน้าจอ -->
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-pink-600 drop-shadow-sm">Happy Anniversary ❤️</h1>
+        <p class="text-xl text-gray-500 mt-2">เค้ามีความลับซ่อนอยู่ในกล่องพวกนี้ ลองกดเปิดดูสิคะ</p>
+    </div>
 
-    <!-- 📦 ส่วนเนื้อหาหลัก (Main Content) -->
-    <main class="max-w-md mx-auto flex-grow p-6 w-full">
+    <!-- 📦 โซนกล่องของขวัญให้กด (Clickable Cards) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-3xl px-4">
         
-        <!-- 🏠 หน้าที่ 1: หน้าแรก (Home) -->
-        <section id="home" class="page-content space-y-6 text-center animate-fade-in">
-            <h1 class="text-3xl font-bold text-pink-600 mt-4">Happy Anniversary!</h1>
-            <p class="text-xl text-gray-500">ยินดีด้วยกับอีกหนึ่งปีที่น่ารักของเรานะ</p>
+        <!-- กล่องที่ 1: เรื่องราวของเรา -->
+        <button onclick="openModal('🏠 เรื่องราวของเรา', 'ขอบคุณที่อยู่ข้างกันและคอยเป็นความสุขให้กันเสมอนะคะ ยินดีด้วยกับอีกหนึ่งปีที่น่ารักของเรานะเธอ! ดีใจที่มีเธอในชีวิตที่สุดเลย', 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500')" 
+                class="bg-white p-8 rounded-2xl shadow-md border-2 border-pink-200 hover:border-pink-400 hover:scale-105 transition transform text-center flex flex-col items-center justify-center space-y-3 cursor-pointer group">
+            <span class="text-5xl group-hover:animate-bounce">🎁</span>
+            <span class="text-xl font-bold text-pink-500">เปิดกล่องที่ 1</span>
+            <span class="text-sm text-gray-400">เรื่องราวของเรา</span>
+        </button>
+
+        <!-- กล่องที่ 2: ความทรงจำดีๆ -->
+        <button onclick="openModal('📸 ความทรงจำดีๆ', 'จำได้ไหมวันนั้นที่ไปเที่ยวด้วยกัน สนุกมากเลยเนอะ ลมเย็นๆ กับมือที่จับกันไว้ มันดีที่สุดในโลกเลยล่ะ อยากไปเที่ยวกับเธออีกบ่อยๆ เลย', 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500')" 
+                class="bg-white p-8 rounded-2xl shadow-md border-2 border-pink-200 hover:border-pink-400 hover:scale-105 transition transform text-center flex flex-col items-center justify-center space-y-3 cursor-pointer group">
+            <span class="text-5xl group-hover:animate-bounce">💌</span>
+            <span class="text-xl font-bold text-pink-500">เปิดกล่องที่ 2</span>
+            <span class="text-sm text-gray-400">ความทรงจำของเรา</span>
+        </button>
+
+        <!-- กล่องที่ 3: จดหมายความในใจ (แบบไม่ใส่รูป โชว์เฉพาะข้อความหวานๆ) -->
+        <button onclick="openModal('💖 ถึง...คนเก่งของเค้า', 'อยากบอกว่าขอบคุณมากๆ เลยนะสำหรับทุกอย่างที่ผ่านมา ขอบคุณที่เป็นทั้งแฟน เป็นเซฟโซนที่ดีที่สุดให้เค้าเสมอ เวลาที่เธอหัวเราะน่ะน่ารักที่สุดในโลกเลยรู้ไหม\n\nปีนี้และปีต่อๆ ไป ก็ขอให้เราจับมือกันแน่นๆ แบบนี้ เติบโตไปด้วยกันนะ เค้ารักเธอที่สุดในโลกเลยค่ะ! 🥰', '')" 
+                class="bg-white p-8 rounded-2xl shadow-md border-2 border-pink-200 hover:border-pink-400 hover:scale-105 transition transform text-center flex flex-col items-center justify-center space-y-3 cursor-pointer group">
+            <span class="text-5xl group-hover:animate-bounce">💝</span>
+            <span class="text-xl font-bold text-pink-500">เปิดกล่องที่ 3</span>
+            <span class="text-sm text-gray-400">จดหมายความในใจ</span>
+        </button>
+
+    </div>
+
+    <!-- 🛍️ กล่องข้อความ Pop-up (Modal) ที่จะเด้งขึ้นมาเมื่อกด -->
+    <div id="messageModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 hidden z-50 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl transform transition-all p-6 relative">
             
-            <!-- ใส่รูปคู่หลักตรงนี้ -->
-            <div class="overflow-hidden rounded-2xl shadow-lg border-4 border-white">
-                <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500" alt="รูปคู่ของเรา" class="w-full h-64 object-cover">
-            </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-sm">
-                <p class="text-lg">"ขอบคุณที่อยู่ข้างกันและคอยเป็นความสุขให้กันเสมอนะคะ"</p>
-            </div>
-        </section>
-
-        <!-- 📸 หน้าที่ 2: ความทรงจำ (Gallery) -->
-        <section id="gallery" class="page-content space-y-6 hidden">
-            <h2 class="text-2xl font-bold text-pink-600 text-center">Our Memories</h2>
-            <p class="text-center text-gray-500 -mt-4">รูปถ่ายและเรื่องราวที่เราชอบที่สุด</p>
-
-            <!-- กล่องความทรงจำที่ 1 -->
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500" alt="เดทแรก" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <span class="text-sm text-pink-400 font-bold">📍 เดทแรกของเรา</span>
-                    <p class="text-gray-600 mt-1">จำได้ไหมวันนั้นที่ไปกินไอศกรีมด้วยกันครั้งแรก ตื่นเต้นจนทำช้อนตกเลยล่ะ ฮ่าๆ</p>
-                </div>
-            </div>
-
-            <!-- กล่องความทรงจำที่ 2 -->
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500" alt="ทริปแรก" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <span class="text-sm text-pink-400 font-bold">🏖️ ทริปทะเลครั้งแรก</span>
-                    <p class="text-gray-600 mt-1">วันที่ไปดูพระอาทิตย์ตกดินด้วยกัน ลมเย็นๆ กับมือที่จับกันไว้ มันดีที่สุดเลย</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 💌 หน้าที่ 3: ความในใจ (Letter) -->
-        <section id="letter" class="page-content space-y-6 hidden">
-            <h2 class="text-2xl font-bold text-pink-600 text-center">ถึง...คนเก่งของเค้า</h2>
+            <!-- ปุ่มกากบาทสำหรับปิดกล่อง -->
+            <button onclick="closeModal()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
             
-            <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-pink-400 space-y-4">
-                <p>เธอขา...</p>
-                <p class="indent-8 leading-relaxed">
-                    อยากบอกว่าขอบคุณมาก ๆ เลยนะสำหรับทุกอย่างที่ผ่านมา ขอบคุณที่เป็นทั้งแฟน เป็นทั้งเพื่อน และเป็นเซฟโซนที่ดีที่สุดให้เค้าเสมอ เวลาที่เธอหัวเราะน่ะน่ารักที่สุดในโลกเลยรู้ไหม
-                </p>
-                <p class="indent-8 leading-relaxed">
-                    ปีนี้และปีต่อ ๆ ไป ก็ขอให้เราจับมือกันแน่น ๆ แบบนี้ เรียนรู้และเติบโตไปด้วยกันนะ เค้ารักเธอที่สุดในโลกเลยค่ะ ❤️
-                </p>
-                <p class="text-right font-bold text-pink-500 mt-4">จาก...ที่รักของเธอ</p>
+            <!-- หัวข้อในกล่องข้อความ -->
+            <h3 id="modalTitle" class="text-2xl font-bold text-pink-600 text-center mb-4"></h3>
+            
+            <!-- โซนแสดงรูปภาพ (จะซ่อนอัติโนมัติถ้าไม่มีการใส่ลิงก์รูป) -->
+            <div id="modalImgContainer" class="mb-4 hidden overflow-hidden rounded-xl max-h-52 shadow-inner">
+                <img id="modalImg" src="" alt="Memory Image" class="w-full h-full object-cover">
             </div>
-        </section>
+            
+            <!-- โซนแสดงเนื้อหาข้อความ -->
+            <p id="modalText" class="text-gray-600 text-center leading-relaxed whitespace-pre-line text-lg bg-pink-50 p-4 rounded-xl"></p>
+            
+            <!-- ปุ่มปิดด้านล่าง -->
+            <div class="mt-6 text-center">
+                <button onclick="closeModal()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-8 rounded-full shadow-md transition transform hover:scale-105">
+                    ปิดกล่องความรัก 💖
+                </button>
+            </div>
+        </div>
+    </div>
 
-    </main>
-
-    <!-- 🎵 ส่วนท้าย (Footer) -->
-    <footer class="text-center py-4 text-xs text-gray-400">
+    <!-- 🎵 ส่วนท้ายเว็บ -->
+    <footer class="text-center mt-12 text-xs text-gray-400">
         Made with ❤️ for you
     </footer>
 
-    <!-- 🛠️ JavaScript สำหรับควบคุมการเปลี่ยนหน้า -->
+    <!-- 🛠️ JavaScript ควบคุมการเปิด-ปิดกล่องข้อความ Pop-up -->
     <script>
-        function switchPage(pageId) {
-            // ซ่อนทุกหน้าก่อน
-            document.querySelectorAll('.page-content').forEach(page => {
-                page.classList.add('hidden');
-            });
-            // แสดงเฉพาะหน้าที่เลือก
-            document.getElementById(pageId).classList.remove('hidden');
+        function openModal(title, text, imgSrc) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerText = text;
+            
+            const imgContainer = document.getElementById('modalImgContainer');
+            const img = document.getElementById('modalImg');
+            
+            // เช็คว่ามีรูปส่งมาไหม ถ้ามีให้โชว์ ถ้าไม่มีให้ซ่อนกล่องรูป
+            if (imgSrc) {
+                img.src = imgSrc;
+                imgContainer.classList.remove('hidden');
+            } else {
+                imgContainer.classList.add('hidden');
+            }
+            
+            // แสดง Pop-up
+            document.getElementById('messageModal').classList.remove('hidden');
+        }
 
-            // เปลี่ยนสีปุ่มเมนูให้รู้ว่าอยู่หน้าไหน
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-pink-500');
-                btn.classList.add('text-gray-500');
-            });
-            event.target.classList.remove('text-gray-500');
-            event.target.classList.add('text-pink-500');
+        function closeModal() {
+            // ซ่อน Pop-up
+            document.getElementById('messageModal').classList.add('hidden');
+        }
+        
+        // พิเศษ: ถ้าคลิกพื้นที่ว่างข้างนอกกล่อง Pop-up ก็จะปิดให้เองอัตโนมัติด้วยค่ะ
+        window.onclick = function(event) {
+            const modal = document.getElementById('messageModal');
+            if (event.target == modal) {
+                closeModal();
+            }
         }
     </script>
 </body>
