@@ -66,7 +66,6 @@
       .container { grid-template-columns: 1fr; }
     }
 
-    /* การ์ดสถานะของเรา */
     .status-card {
       background: var(--panel); border-radius: var(--radius); padding: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: fit-content;
@@ -76,7 +75,6 @@
       color: #2e7d32; border-radius: 12px; font-size: 12px; font-weight: bold; margin-top: 8px;
     }
 
-    /* กล่องแชต */
     .chat-card {
       background: var(--panel); border-radius: var(--radius); height: 550px;
       display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
@@ -107,10 +105,15 @@
       <button id="start-cam-btn" onclick="startCameraProcess()" style="margin-top: 15px; padding: 10px 20px; background: var(--primary-button); color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%;">
         📷 เปิดกล้องสแกนยิ้ม
       </button>
+
+      <!-- ปุ่มสำรองกรณีกล้อง/AI มีปัญหา -->
+      <p onclick="bypassGate()" style="margin-top: 15px; font-size: 11px; color: var(--text-sub); cursor: pointer; text-decoration: underline;">
+        (ถ้ากล้องไม่ทำงาน กดตรงนี้เพื่อเข้าสเปซได้เลยค่ะ)
+      </p>
     </div>
   </div>
 
-  <!-- 2. ส่วนแถบบนสุด (Header) -->
+  <!-- 2. Header -->
   <header>
     <div style="display: flex; align-items: center; gap: 8px;">
       <button id="music-btn" onclick="toggleMusic()" style="padding:6px 12px; border-radius:15px; border:none; cursor:pointer; background:#e9ecef;">🎵 เล่นเพลง</button>
@@ -126,7 +129,7 @@
     </div>
   </header>
 
-  <!-- 3. ส่วนเนื้อหาหลัก -->
+  <!-- 3. Layout หลัก -->
   <div class="container">
     <div class="status-card">
       <h4 style="color: var(--text-sub); font-size: 12px;">STATUS UPDATE</h4>
@@ -186,66 +189,68 @@
     }
 
     // --- Smile Gate Fix ---
+    let scanInterval = null;
+
+    function bypassGate() {
+      if (scanInterval) clearInterval(scanInterval);
+      const gate = document.getElementById('smile-gate');
+      gate.style.opacity = '0';
+      setTimeout(() => gate.style.display = 'none', 500);
+    }
+
     async function startCameraProcess() {
       const video = document.getElementById('video');
       const status = document.getElementById('gate-status');
       const startBtn = document.getElementById('start-cam-btn');
 
-      // 1. ซ่อนปุ่มทันทีที่กด
       startBtn.style.display = 'none';
       status.innerText = "กำลังขออนุญาตเปิดกล้อง...";
 
       try {
-        // 2. ขอสิทธิ์และเปิดกล้อง
         const stream = await navigator.mediaDevices.getUserMedia({ 
           video: { width: 320, height: 240, facingMode: "user" } 
         });
         
         video.srcObject = stream;
+        await video.play();
+
         status.innerText = "กำลังโหลดระบบ AI สแกนใบหน้า...";
 
-        // 3. โหลดโมเดล
-        const MODEL_URL = 'https://cdn.jsdelivr.net/gh/cddlib/face-api.js@master/weights';
-        await Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-          faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
-        ]);
+        // ดึงโมเดลจาก CDN raw.githubusercontent โดยตรง ป้องกัน CORS
+        const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
 
-        // 4. เมื่อพร้อมแล้วอัปเดตข้อความทันที
         status.innerText = "มองกล้องแล้วยิ้มหวานๆ หน่อยน้า 😊";
 
-        video.addEventListener('play', () => {
-          const interval = setInterval(async () => {
+        // เริ่ม Loop สแกนทันที
+        scanInterval = setInterval(async () => {
+          try {
             const detections = await faceapi.detectAllFaces(
               video, 
               new faceapi.TinyFaceDetectorOptions()
             ).withFaceExpressions();
 
-            if (detections.length > 0) {
+            if (detections && detections.length > 0) {
               const happyScore = detections[0].expressions.happy;
               
-              if (happyScore > 0.6) {
+              if (happyScore > 0.5) { // ปรับเกณฑ์ความยิ้มลงมาเล็กน้อยให้ติดง่ายขึ้น
                 status.innerText = "✨ รอยยิ้มผ่านแล้ว! ยินดีต้อนรับนะคะ 🎉";
                 status.style.color = "#2e7d32";
-                clearInterval(interval);
+                clearInterval(scanInterval);
                 
                 stream.getTracks().forEach(track => track.stop());
-
-                setTimeout(() => {
-                  const gate = document.getElementById('smile-gate');
-                  gate.style.opacity = '0';
-                  setTimeout(() => gate.style.display = 'none', 500);
-                }, 1000);
+                setTimeout(bypassGate, 800);
               }
             }
-          }, 300);
-        });
+          } catch(e) { console.log("Scanning...", e); }
+        }, 400);
 
       } catch (err) {
         console.error("Smile Gate Error:", err);
         startBtn.style.display = 'block';
         startBtn.innerText = "🔄 ลองเปิดกล้องอีกครั้ง";
-        status.innerText = "❌ กรุณากด 'อนุญาต (Allow)' ให้เข้าถึงกล้องนะคะ";
+        status.innerText = "❌ เกิดข้อผิดพลาดในการเปิดกล้องหรือโหลด AI";
         status.style.color = "#d32f2f";
       }
     }
