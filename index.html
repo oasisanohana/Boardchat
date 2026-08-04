@@ -97,10 +97,16 @@
     <div class="gate-card">
       <h3>😊 สแกนรอยยิ้มก่อนเข้าสเปซนะ</h3>
       <p style="font-size: 12px; color: var(--text-sub); margin-top:4px;">ยิ้มหวานๆ ให้กล้องหน่อยเร็วคนเก่ง</p>
+      
       <div id="webcam-box">
         <video id="video" autoplay muted playsinline></video>
       </div>
-      <div class="gate-msg" id="gate-status">กำลังเริ่มต้นระบบ...</div>
+
+      <div class="gate-msg" id="gate-status">พร้อมแล้วกดปุ่มด้านล่างเพื่อเปิดกล้องน้า</div>
+      
+      <button id="start-cam-btn" onclick="startCameraProcess()" style="margin-top: 15px; padding: 10px 20px; background: var(--primary-button); color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%;">
+        📷 เปิดกล้องสแกนยิ้ม
+      </button>
     </div>
   </div>
 
@@ -129,9 +135,9 @@
     <!-- การ์ดบอกสถานะของเรา (อัปเดตจากหลังบ้าน) -->
     <div class="status-card">
       <h4 style="color: var(--text-sub); font-size: 12px;">STATUS UPDATE</h4>
-      <h3 id="my-status-title" style="margin-top: 5px;">กำลังโหลด...</h3>
-      <p id="my-status-detail" style="font-size: 13px; color: var(--text-sub); margin-top: 4px;">-</p>
-      <div class="status-badge" id="my-status-time">อัปเดตล่าสุด: -</div>
+      <h3 id="my-status-title" style="margin-top: 5px;">กำลังทำงาน...</h3>
+      <p id="my-status-detail" style="font-size: 13px; color: var(--text-sub); margin-top: 4px;">กำลังทำโปรเจกต์อยู่ เดี๋ยวทักหานะคะ</p>
+      <div class="status-badge" id="my-status-time">อัปเดตล่าสุด: เมื่อสักครู่</div>
     </div>
 
     <!-- บอร์ดแชตคุยกับ AI ตัวแทนของเรา -->
@@ -148,7 +154,7 @@
   </div>
 
   <script>
-    // Config Supabase & Gemini Key (อย่าลืมเอา Key จริงมาใส่นะคะ)
+    // Config Supabase & Gemini Key
     const SUPABASE_URL = "YOUR_SUPABASE_URL";
     const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
     const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
@@ -189,28 +195,30 @@
       }
     }
 
-    // --- 3. Smile Gate (ปรับปรุงแก้ปัญหากล้องค้าง) ---
-    async function initSmileGate() {
+    // --- 3. Smile Gate (ปุ่มกดเปิดกล้องแก้ปัญหา Permissions) ---
+    async function startCameraProcess() {
       const video = document.getElementById('video');
       const status = document.getElementById('gate-status');
+      const startBtn = document.getElementById('start-cam-btn');
+
+      startBtn.style.display = 'none';
 
       try {
-        status.innerText = "กำลังโหลดระบบ AI...";
-
-        // โหลดโมเดลจาก CDN เสถียร
-        const MODEL_URL = 'https://cdn.jsdelivr.net/gh/cddlib/face-api.js@master/weights';
-        await Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-          faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
-        ]);
-
-        status.innerText = "กำลังเปิดกล้อง...";
+        status.innerText = "กำลังขออนุญาตเปิดกล้อง...";
 
         const stream = await navigator.mediaDevices.getUserMedia({ 
           video: { width: 320, height: 240, facingMode: "user" } 
         });
         
         video.srcObject = stream;
+        status.innerText = "กำลังโหลดระบบ AI สแกนใบหน้า...";
+
+        const MODEL_URL = 'https://cdn.jsdelivr.net/gh/cddlib/face-api.js@master/weights';
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+          faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+        ]);
+
         status.innerText = "มองกล้องแล้วยิ้มหวานๆ หน่อยน้า 😊";
 
         video.addEventListener('play', () => {
@@ -242,7 +250,9 @@
 
       } catch (err) {
         console.error("Smile Gate Error:", err);
-        status.innerText = "❌ เกิดข้อผิดพลาดในการเปิดกล้องหรือ AI";
+        startBtn.style.display = 'block';
+        startBtn.innerText = "🔄 ลองเปิดกล้องอีกครั้ง";
+        status.innerText = "❌ กรุณากด 'อนุญาต (Allow)' ให้เข้าถึงกล้องนะคะ";
         status.style.color = "#d32f2f";
       }
     }
@@ -331,12 +341,11 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    // Init เมื่อหน้าเว็บพร้อม
+    // Init
     window.addEventListener('DOMContentLoaded', () => {
       updateAnniversary();
       fetchNakhonPhanomWeather();
       loadBackendData();
-      initSmileGate();
     });
   </script>
 </body>
