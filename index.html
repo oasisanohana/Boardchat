@@ -7,7 +7,7 @@
 
   <!-- Supabase & Face-API.js -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
   <style>
     :root {
@@ -17,8 +17,8 @@
       --text-sub: #8d99ae;
       --accent-soft: #a8dadc;
       --primary-button: #457b9d;
-      --chat-user: #e63946;
-      --chat-bot: #f1faee;
+      --chat-user: #457b9d;
+      --chat-bot: #edf2f4;
       --radius: 16px;
       font-family: 'Sarabun', system-ui, -apple-system, sans-serif;
     }
@@ -29,17 +29,18 @@
     /* --- 1. หน้าสแกนรอยยิ้ม (Smile Gate Overlay) --- */
     #smile-gate {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(248, 249, 250, 0.95); backdrop-filter: blur(8px);
+      background: rgba(248, 249, 250, 0.98); backdrop-filter: blur(8px);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 9999; transition: opacity 0.5s ease;
     }
     .gate-card {
       background: var(--panel); padding: 30px; border-radius: var(--radius);
-      text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 360px;
+      text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 360px; width: 90%;
     }
     #webcam-box {
       width: 280px; height: 210px; border-radius: 12px; overflow: hidden;
-      margin: 15px auto; background: #222; border: 2px solid var(--accent-soft);
+      margin: 15px auto; background: #1a1a1a; border: 2px solid var(--accent-soft);
+      position: relative;
     }
     #webcam-box video { width: 100%; height: 100%; object-fit: cover; }
     .gate-msg { font-size: 14px; font-weight: 600; color: var(--primary-button); margin-top: 10px; }
@@ -60,6 +61,9 @@
     .container {
       max-width: 1000px; margin: 20px auto; padding: 0 20px;
       display: grid; grid-template-columns: 280px 1fr; gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; }
     }
 
     /* การ์ดสถานะของเรา */
@@ -94,9 +98,9 @@
       <h3>😊 สแกนรอยยิ้มก่อนเข้าสเปซนะ</h3>
       <p style="font-size: 12px; color: var(--text-sub); margin-top:4px;">ยิ้มหวานๆ ให้กล้องหน่อยเร็วคนเก่ง</p>
       <div id="webcam-box">
-        <video id="video" autoplay muted></video>
+        <video id="video" autoplay muted playsinline></video>
       </div>
-      <div class="gate-msg" id="gate-status">กำลังเริ่มต้นกล้อง...</div>
+      <div class="gate-msg" id="gate-status">กำลังเริ่มต้นระบบ...</div>
     </div>
   </div>
 
@@ -104,7 +108,7 @@
   <header>
     <!-- ตัวเครื่องเล่นเพลง -->
     <div style="display: flex; align-items: center; gap: 8px;">
-      <button id="music-btn" onclick="toggleMusic()" style="padding:6px 12px; border-radius:15px; border:none; cursor:pointer;">🎵 เล่นเพลง</button>
+      <button id="music-btn" onclick="toggleMusic()" style="padding:6px 12px; border-radius:15px; border:none; cursor:pointer; background:#e9ecef;">🎵 เล่นเพลง</button>
       <audio id="bg-music" loop></audio>
     </div>
 
@@ -144,12 +148,15 @@
   </div>
 
   <script>
-    // Config Supabase & Gemini Key
+    // Config Supabase & Gemini Key (อย่าลืมเอา Key จริงมาใส่นะคะ)
     const SUPABASE_URL = "YOUR_SUPABASE_URL";
     const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
     const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
     
-    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let sb = null;
+    if (SUPABASE_URL !== "YOUR_SUPABASE_URL") {
+      sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
 
     // --- 1. คำนวณวันครบรอบ ---
     const START_DATE = new Date("2024-01-01"); // 👈 กำหนดวันครบรอบตรงนี้ (ปี-เดือน-วัน)
@@ -160,10 +167,9 @@
       document.getElementById('days-count').innerText = diffDays;
     }
 
-    // --- 2. สภาพอากาศ นครพนม (Open-Meteo API ฟรี ไม่ต้องสมัคร Key) ---
+    // --- 2. สภาพอากาศ นครพนม ---
     async function fetchNakhonPhanomWeather() {
       try {
-        // พิกัด จ.นครพนม (Lat: 17.39, Lon: 104.77)
         const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=17.39&longitude=104.77&current_weather=true");
         const data = await res.json();
         const code = data.current_weather.weathercode;
@@ -172,7 +178,6 @@
         let weatherText = `🌤️ ${temp}°C`;
         let careMsg = "วันนี้อากาศดี ดูแลสุขภาพด้วยนะคะ";
 
-        // รหัสสภาพอากาศที่มีฝน (Rain / Drizzle / Thunderstorm)
         if ([51, 53, 55, 61, 63, 65, 80, 81, 82, 95].includes(code)) {
           weatherText = `🌧️ ฝนตก (${temp}°C)`;
           careMsg = "วันนี้พกร่มด้วยนะคะ อย่าตากฝนน้า เค้าเป็นห่วง 🥺";
@@ -184,55 +189,89 @@
       }
     }
 
-    // --- 3. Smile Gate (สแกนรอยยิ้มก่อนเข้า) ---
+    // --- 3. Smile Gate (ปรับปรุงแก้ปัญหากล้องค้าง) ---
     async function initSmileGate() {
       const video = document.getElementById('video');
       const status = document.getElementById('gate-status');
 
-      await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
-      await faceapi.nets.faceExpressionNet.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
+      try {
+        status.innerText = "กำลังโหลดระบบ AI...";
 
-      navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => {
+        // โหลดโมเดลจาก CDN เสถียร
+        const MODEL_URL = 'https://cdn.jsdelivr.net/gh/cddlib/face-api.js@master/weights';
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+          faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+        ]);
+
+        status.innerText = "กำลังเปิดกล้อง...";
+
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: 320, height: 240, facingMode: "user" } 
+        });
+        
         video.srcObject = stream;
         status.innerText = "มองกล้องแล้วยิ้มหวานๆ หน่อยน้า 😊";
-      });
 
-      video.addEventListener('play', () => {
-        const interval = setInterval(async () => {
-          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
-          if (detections.length > 0 && detections[0].expressions.happy > 0.75) {
-            status.innerText = "✨ รอยยิ้มผ่านแล้ว! ยินดีต้อนรับเข้าสู่สเปซของเรานะคะ 🎉";
-            status.style.color = "#2e7d32";
-            clearInterval(interval);
-            setTimeout(() => {
-              document.getElementById('smile-gate').style.opacity = '0';
-              setTimeout(() => document.getElementById('smile-gate').style.display = 'none', 500);
-            }, 1200);
-          }
-        }, 400);
-      });
+        video.addEventListener('play', () => {
+          const interval = setInterval(async () => {
+            const detections = await faceapi.detectAllFaces(
+              video, 
+              new faceapi.TinyFaceDetectorOptions()
+            ).withFaceExpressions();
+
+            if (detections.length > 0) {
+              const happyScore = detections[0].expressions.happy;
+              
+              if (happyScore > 0.6) {
+                status.innerText = "✨ รอยยิ้มผ่านแล้ว! ยินดีต้อนรับนะคะ 🎉";
+                status.style.color = "#2e7d32";
+                clearInterval(interval);
+                
+                stream.getTracks().forEach(track => track.stop());
+
+                setTimeout(() => {
+                  const gate = document.getElementById('smile-gate');
+                  gate.style.opacity = '0';
+                  setTimeout(() => gate.style.display = 'none', 500);
+                }, 1000);
+              }
+            }
+          }, 300);
+        });
+
+      } catch (err) {
+        console.error("Smile Gate Error:", err);
+        status.innerText = "❌ เกิดข้อผิดพลาดในการเปิดกล้องหรือ AI";
+        status.style.color = "#d32f2f";
+      }
     }
 
-    // --- 4. ดึงเพลง & สถานะจาก Supabase Realtime ---
+    // --- 4. ดึงข้อมูลจาก Supabase ---
     async function loadBackendData() {
-      // ดึงข้อมูลเพลงล่าสุด
-      const { data: songs } = await sb.from('settings').select('value').eq('key', 'active_song').single();
-      if (songs) {
-        document.getElementById('bg-music').src = songs.value;
-      }
+      if (!sb) return;
+      try {
+        const { data: songs } = await sb.from('settings').select('value').eq('key', 'active_song').single();
+        if (songs) document.getElementById('bg-music').src = songs.value;
 
-      // ดึงสถานะปัจจุบัน
-      const { data: status } = await sb.from('my_status').select('*').order('created_at', { ascending: false }).limit(1).single();
-      if (status) {
-        document.getElementById('my-status-title').innerText = status.title;
-        document.getElementById('my-status-detail').innerText = status.detail;
-        document.getElementById('my-status-time').innerText = "อัปเดตเมื่อ: " + new Date(status.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const { data: status } = await sb.from('my_status').select('*').order('created_at', { ascending: false }).limit(1).single();
+        if (status) {
+          document.getElementById('my-status-title').innerText = status.title;
+          document.getElementById('my-status-detail').innerText = status.detail;
+          document.getElementById('my-status-time').innerText = "อัปเดตเมื่อ: " + new Date(status.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+      } catch (e) {
+        console.log("Database not configured yet.");
       }
     }
 
     function toggleMusic() {
       const audio = document.getElementById('bg-music');
       const btn = document.getElementById('music-btn');
+      if (!audio.src) {
+        alert("ยังไม่ได้ตั้งค่าเพลงหลังบ้านค่ะ");
+        return;
+      }
       if (audio.paused) {
         audio.play();
         btn.innerText = "⏸️ พักเพลง";
@@ -242,7 +281,7 @@
       }
     }
 
-    // --- 5. AI Chatbot (สไตล์การพูดอิงตามบุคลิกผู้ใช้) ---
+    // --- 5. AI Chatbot ---
     const SYSTEM_PROMPT = `คุณคือ AI ตัวแทนแฟนหนุ่ม (นักศึกษาวิศวะคอมฯ/IT ชอบทำโปรเจกต์ ลอจิกแน่น เล่นเกม Minecraft มีความกวนๆ ติดเล่น แต่ใจดีและอบอุ่น)
 พูดจาเป็นกันเอง ใช้สรรพนามแทนตัวเองว่า "เค้า" หรือ "พี่" แล้วแต่จังหวะ และเรียกแฟนว่า "ตัวเล็ก" หรือชื่อแฟน
 ถ้าแฟนถามว่าทำอะไรอยู่ ให้บอกสถานะการทำงานปัจจุบันแบบอบอุ่น และใส่ใจเรื่องสภาพอากาศฝนตกเสมอ`;
@@ -258,6 +297,11 @@
       input.value = '';
       chatHistory.push({ role: "user", parts: [{ text }] });
 
+      if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY") {
+        setTimeout(() => appendMsg("ยังไม่ได้ใส่ GEMINI_API_KEY ในโค้ดนะคะ 🥺", 'bot'), 500);
+        return;
+      }
+
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
           method: 'POST',
@@ -272,8 +316,7 @@
         appendMsg(reply, 'bot');
         chatHistory.push({ role: "model", parts: [{ text: reply }] });
 
-        // บันทึกประวัติแชตลง Supabase Database
-        await sb.from('chat_logs').insert([{ user_msg: text, bot_reply: reply }]);
+        if (sb) await sb.from('chat_logs').insert([{ user_msg: text, bot_reply: reply }]);
       } catch (e) {
         appendMsg("ขออภัยนะคนเก่ง ระบบ AI ขัดข้องชั่วคราวค่ะ 🥺", 'bot');
       }
@@ -288,13 +331,13 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    // Init
-    window.onload = () => {
+    // Init เมื่อหน้าเว็บพร้อม
+    window.addEventListener('DOMContentLoaded', () => {
       updateAnniversary();
       fetchNakhonPhanomWeather();
-      initSmileGate();
       loadBackendData();
-    };
+      initSmileGate();
+    });
   </script>
 </body>
 </html>
