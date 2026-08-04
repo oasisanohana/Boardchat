@@ -5,96 +5,202 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Our Private Space 🤍</title>
 
+  <!-- Google Fonts: Prompt & Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+
   <!-- Supabase & Face-API.js -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
   <style>
     :root {
-      --bg: #f8f9fa;
-      --panel: #ffffff;
-      --text-main: #2b2d42;
-      --text-sub: #8d99ae;
-      --accent-soft: #a8dadc;
-      --primary-button: #457b9d;
-      --chat-user: #457b9d;
-      --chat-bot: #edf2f4;
-      --radius: 16px;
-      font-family: 'Sarabun', system-ui, -apple-system, sans-serif;
+      --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      --panel-bg: rgba(255, 255, 255, 0.9);
+      --panel-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      --panel-border: 1px solid rgba(255, 255, 255, 0.6);
+      --primary-color: #4a90e2;
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --text-main: #2d3748;
+      --text-sub: #718096;
+      --chat-bot-bg: #edf2f7;
+      --radius-lg: 20px;
+      --radius-md: 12px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; }
 
-    /* --- 1. หน้าสแกนรอยยิ้ม (Smile Gate Overlay) --- */
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: 'Prompt', 'Sarabun', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- 1. หน้าสแกนรอยยิ้ม (Smile Gate) --- */
     #smile-gate {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(248, 249, 250, 0.98); backdrop-filter: blur(8px);
+      background: rgba(245, 247, 250, 0.95);
+      backdrop-filter: blur(12px);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 9999; transition: opacity 0.5s ease;
+      padding: 20px;
     }
     .gate-card {
-      background: var(--panel); padding: 30px; border-radius: var(--radius);
-      text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 360px; width: 90%;
+      background: var(--panel-bg);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      border: var(--panel-border);
+      max-width: 380px; width: 100%;
     }
+    .gate-card h3 { font-size: 20px; color: var(--text-main); margin-bottom: 6px; }
+    
     #webcam-box {
-      width: 280px; height: 210px; border-radius: 12px; overflow: hidden;
-      margin: 15px auto; background: #1a1a1a; border: 2px solid var(--accent-soft);
-      position: relative;
+      width: 100%; height: 230px; border-radius: 16px; overflow: hidden;
+      margin: 18px 0; background: #000; border: 3px solid #fff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15); position: relative;
     }
     #webcam-box video { width: 100%; height: 100%; object-fit: cover; }
-    .gate-msg { font-size: 14px; font-weight: 600; color: var(--primary-button); margin-top: 10px; }
+    .gate-msg { font-size: 14px; font-weight: 500; color: #4a5568; margin-top: 8px; min-height: 20px; }
 
-    /* --- 2. Header & แถบวันครบรอบ --- */
+    /* ปุ่มกดหลัก สไตล์ Modern Gradient */
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white; border: none;
+      padding: 12px 24px; border-radius: 30px;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      width: 100%; margin-top: 15px;
+    }
+    .btn-primary:active { transform: scale(0.98); }
+
+    /* --- 2. Header แถบบน --- */
     header {
-      background: var(--panel); padding: 12px 24px; display: flex;
-      justify-content: space-between; align-items: center;
-      border-bottom: 1px solid #e9ecef; position: sticky; top: 0; z-index: 100;
+      background: var(--panel-bg);
+      backdrop-filter: blur(10px);
+      padding: 14px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: var(--panel-border);
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     }
+    .music-btn {
+      background: #ffffff; border: 1px solid #e2e8f0;
+      padding: 8px 16px; border-radius: 20px;
+      font-size: 13px; font-weight: 500; color: var(--text-main);
+      cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+    .music-btn:hover { background: #f7fafc; }
+
     .anniversary-badge {
-      text-align: center; background: #edf2f4; padding: 6px 16px;
-      border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-main);
+      background: var(--primary-gradient);
+      color: white; padding: 6px 18px;
+      border-radius: 20px; font-size: 13px; font-weight: 500;
+      box-shadow: 0 3px 10px rgba(118, 75, 162, 0.25);
     }
-    .weather-widget { font-size: 12px; color: var(--text-sub); text-align: right; }
+    .weather-widget { font-size: 12px; color: var(--text-sub); text-align: right; line-height: 1.3; }
 
     /* --- 3. Layout หลัก --- */
     .container {
-      max-width: 1000px; margin: 20px auto; padding: 0 20px;
-      display: grid; grid-template-columns: 280px 1fr; gap: 20px;
+      max-width: 1000px; width: 100%; margin: 24px auto; padding: 0 20px;
+      display: grid; grid-template-columns: 300px 1fr; gap: 20px;
+      flex: 1;
     }
+
     @media (max-width: 768px) {
-      .container { grid-template-columns: 1fr; }
+      .container { grid-template-columns: 1fr; margin: 12px auto; padding: 0 12px; }
+      header { padding: 12px 16px; }
+      .weather-widget { display: none; } /* ซ่อนสภาพอากาศบนมือถือจอเล็กเพื่อความคลีน */
     }
 
+    /* --- 4. การ์ดสถานะ (Status Card) --- */
     .status-card {
-      background: var(--panel); border-radius: var(--radius); padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: fit-content;
+      background: var(--panel-bg);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--panel-shadow);
+      border: var(--panel-border);
+      backdrop-filter: blur(10px);
+      height: fit-content;
     }
+    .status-card h4 {
+      font-size: 11px; letter-spacing: 1px; color: var(--text-sub);
+      text-transform: uppercase; font-weight: 600; margin-bottom: 8px;
+    }
+    .status-card h3 { font-size: 18px; color: var(--text-main); font-weight: 600; }
+    .status-card p { font-size: 13px; color: var(--text-sub); margin-top: 6px; line-height: 1.5; }
+    
     .status-badge {
-      display: inline-block; padding: 4px 10px; background: #e8f5e9;
-      color: #2e7d32; border-radius: 12px; font-size: 12px; font-weight: bold; margin-top: 8px;
+      display: inline-block; padding: 4px 12px;
+      background: #e6fffa; color: #234e52;
+      border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 12px;
     }
 
+    /* --- 5. กล่องแชต (Chat Card) --- */
     .chat-card {
-      background: var(--panel); border-radius: var(--radius); height: 550px;
-      display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      background: var(--panel-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--panel-shadow);
+      border: var(--panel-border);
+      backdrop-filter: blur(10px);
+      height: 560px;
+      display: flex; flex-direction: column; overflow: hidden;
     }
-    .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-    .msg { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.4; }
-    .msg.user { align-self: flex-end; background: var(--primary-button); color: white; }
-    .msg.bot { align-self: flex-start; background: var(--chat-bot); color: var(--text-main); border: 1px solid #e9ecef; }
-    .chat-input { padding: 12px; border-top: 1px solid #e9ecef; display: flex; gap: 8px; }
-    .chat-input input { flex: 1; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; outline: none; }
-    .chat-input button { padding: 10px 18px; background: var(--primary-button); color: white; border: none; border-radius: 8px; cursor: pointer; }
+    .chat-messages {
+      flex: 1; padding: 20px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .msg {
+      max-width: 80%; padding: 12px 18px; border-radius: 18px;
+      font-size: 14px; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+    .msg.user {
+      align-self: flex-end;
+      background: var(--primary-gradient);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.bot {
+      align-self: flex-start;
+      background: var(--chat-bot-bg);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* ช่องพิมพ์แชต */
+    .chat-input {
+      padding: 14px 16px; background: rgba(255,255,255,0.7);
+      border-top: 1px solid #edf2f7; display: flex; gap: 10px;
+    }
+    .chat-input input {
+      flex: 1; padding: 12px 18px;
+      border: 1px solid #e2e8f0; border-radius: 25px;
+      outline: none; font-size: 14px; font-family: inherit;
+      background: #ffffff; transition: border-color 0.2s;
+    }
+    .chat-input input:focus { border-color: #667eea; }
+    .chat-input button {
+      padding: 0 22px; background: var(--primary-gradient);
+      color: white; border: none; border-radius: 25px;
+      font-weight: 500; cursor: pointer; transition: transform 0.1s ease;
+    }
+    .chat-input button:active { transform: scale(0.95); }
   </style>
 </head>
 <body>
 
-  <!-- 1. ประตูสแกนรอยยิ้ม -->
+  <!-- 1. หน้าสแกนรอยยิ้ม -->
   <div id="smile-gate">
     <div class="gate-card">
       <h3>😊 สแกนรอยยิ้มก่อนเข้าสเปซนะ</h3>
-      <p style="font-size: 12px; color: var(--text-sub); margin-top:4px;">ยิ้มหวานๆ ให้กล้องหน่อยเร็วคนเก่ง</p>
+      <p style="font-size: 13px; color: var(--text-sub);">ยิ้มหวานๆ ให้กล้องหน่อยเร็วคนเก่ง</p>
       
       <div id="webcam-box">
         <video id="video" autoplay muted playsinline></video>
@@ -102,13 +208,12 @@
 
       <div class="gate-msg" id="gate-status">พร้อมแล้วกดปุ่มด้านล่างเพื่อเปิดกล้องน้า</div>
       
-      <button id="start-cam-btn" onclick="startCameraProcess()" style="margin-top: 15px; padding: 10px 20px; background: var(--primary-button); color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%;">
+      <button class="btn-primary" id="start-cam-btn" onclick="startCameraProcess()">
         📷 เปิดกล้องสแกนยิ้ม
       </button>
 
-      <!-- ปุ่มสำรองกรณีกล้อง/AI มีปัญหา -->
-      <p onclick="bypassGate()" style="margin-top: 15px; font-size: 11px; color: var(--text-sub); cursor: pointer; text-decoration: underline;">
-        (ถ้ากล้องไม่ทำงาน กดตรงนี้เพื่อเข้าสเปซได้เลยค่ะ)
+      <p onclick="bypassGate()" style="margin-top: 16px; font-size: 12px; color: var(--text-sub); cursor: pointer; text-decoration: underline;">
+        (กดตรงนี้เพื่อข้ามเข้าสเปซได้เลยค่ะ)
       </p>
     </div>
   </div>
@@ -116,7 +221,7 @@
   <!-- 2. Header -->
   <header>
     <div style="display: flex; align-items: center; gap: 8px;">
-      <button id="music-btn" onclick="toggleMusic()" style="padding:6px 12px; border-radius:15px; border:none; cursor:pointer; background:#e9ecef;">🎵 เล่นเพลง</button>
+      <button class="music-btn" id="music-btn" onclick="toggleMusic()">🎵 เล่นเพลง</button>
       <audio id="bg-music" loop></audio>
     </div>
 
@@ -125,19 +230,22 @@
     </div>
 
     <div class="weather-widget" id="weather-box">
-      📍 นครพนม: กำลังโหลดอากาศ...
+      📍 นครพนม: กำลังโหลด...
     </div>
   </header>
 
   <!-- 3. Layout หลัก -->
   <div class="container">
+    
+    <!-- การ์ดบอกสถานะ -->
     <div class="status-card">
-      <h4 style="color: var(--text-sub); font-size: 12px;">STATUS UPDATE</h4>
-      <h3 id="my-status-title" style="margin-top: 5px;">กำลังทำงาน...</h3>
-      <p id="my-status-detail" style="font-size: 13px; color: var(--text-sub); margin-top: 4px;">กำลังทำโปรเจกต์อยู่ เดี๋ยวทักหานะคะ</p>
-      <div class="status-badge" id="my-status-time">อัปเดตล่าสุด: เมื่อสักครู่</div>
+      <h4>MY STATUS</h4>
+      <h3 id="my-status-title">กำลังทำงาน...</h3>
+      <p id="my-status-detail">กำลังทำโปรเจกต์อยู่ เดี๋ยวทักหานะคะ</p>
+      <div class="status-badge" id="my-status-time">อัปเดตเมื่อสักครู่</div>
     </div>
 
+    <!-- กล่องแชตคุยกับ AI -->
     <div class="chat-card">
       <div class="chat-messages" id="chat-box">
         <div class="msg bot">สวัสดีค่ะยินดีต้อนรับเข้าสู่สเปซของเรานะคะ คิดถึงจัง วันนี้เป็นไงบ้างเอ่ย? 💭</div>
@@ -147,6 +255,7 @@
         <button onclick="sendMsg()">ส่ง</button>
       </div>
     </div>
+
   </div>
 
   <script>
@@ -179,16 +288,16 @@
 
         if ([51, 53, 55, 61, 63, 65, 80, 81, 82, 95].includes(code)) {
           weatherText = `🌧️ ฝนตก (${temp}°C)`;
-          careMsg = "วันนี้พกร่มด้วยนะคะ อย่าตากฝนน้า เค้าเป็นห่วง 🥺";
+          careMsg = "พกร่มด้วยนะคะ อย่าตากฝนน้า 🥺";
         }
 
-        document.getElementById('weather-box').innerHTML = `📍 นครพนม: ${weatherText}<br><span style="color:#e63946;">${careMsg}</span>`;
+        document.getElementById('weather-box').innerHTML = `📍 นครพนม: ${weatherText}<br><span style="color:#e53e3e;">${careMsg}</span>`;
       } catch (e) {
-        document.getElementById('weather-box').innerText = "📍 นครพนม: ไม่สามารถดึงสภาพอากาศได้";
+        document.getElementById('weather-box').innerText = "📍 นครพนม";
       }
     }
 
-    // --- Smile Gate Fix ---
+    // --- Smile Gate System ---
     let scanInterval = null;
 
     function bypassGate() {
@@ -214,16 +323,14 @@
         video.srcObject = stream;
         await video.play();
 
-        status.innerText = "กำลังโหลดระบบ AI สแกนใบหน้า...";
+        status.innerText = "กำลังโหลดระบบ AI...";
 
-        // ดึงโมเดลจาก CDN raw.githubusercontent โดยตรง ป้องกัน CORS
         const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
         await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
         await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
 
         status.innerText = "มองกล้องแล้วยิ้มหวานๆ หน่อยน้า 😊";
 
-        // เริ่ม Loop สแกนทันที
         scanInterval = setInterval(async () => {
           try {
             const detections = await faceapi.detectAllFaces(
@@ -234,9 +341,9 @@
             if (detections && detections.length > 0) {
               const happyScore = detections[0].expressions.happy;
               
-              if (happyScore > 0.5) { // ปรับเกณฑ์ความยิ้มลงมาเล็กน้อยให้ติดง่ายขึ้น
+              if (happyScore > 0.5) {
                 status.innerText = "✨ รอยยิ้มผ่านแล้ว! ยินดีต้อนรับนะคะ 🎉";
-                status.style.color = "#2e7d32";
+                status.style.color = "#38a169";
                 clearInterval(scanInterval);
                 
                 stream.getTracks().forEach(track => track.stop());
@@ -250,8 +357,8 @@
         console.error("Smile Gate Error:", err);
         startBtn.style.display = 'block';
         startBtn.innerText = "🔄 ลองเปิดกล้องอีกครั้ง";
-        status.innerText = "❌ เกิดข้อผิดพลาดในการเปิดกล้องหรือโหลด AI";
-        status.style.color = "#d32f2f";
+        status.innerText = "❌ เกิดข้อผิดพลาดในการเปิดกล้อง หรือไม่ได้อนุญาตสิทธิ์";
+        status.style.color = "#e53e3e";
       }
     }
 
