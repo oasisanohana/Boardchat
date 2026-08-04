@@ -1,118 +1,300 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Special Anniversary ❤️</title>
-    <!-- นำเข้า Tailwind CSS และฟอนต์น่ารักๆ -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Itim', cursive; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Private Space 🤍</title>
+
+  <!-- Supabase & Face-API.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --panel: #ffffff;
+      --text-main: #2b2d42;
+      --text-sub: #8d99ae;
+      --accent-soft: #a8dadc;
+      --primary-button: #457b9d;
+      --chat-user: #e63946;
+      --chat-bot: #f1faee;
+      --radius: 16px;
+      font-family: 'Sarabun', system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; }
+
+    /* --- 1. หน้าสแกนรอยยิ้ม (Smile Gate Overlay) --- */
+    #smile-gate {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(248, 249, 250, 0.95); backdrop-filter: blur(8px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999; transition: opacity 0.5s ease;
+    }
+    .gate-card {
+      background: var(--panel); padding: 30px; border-radius: var(--radius);
+      text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 360px;
+    }
+    #webcam-box {
+      width: 280px; height: 210px; border-radius: 12px; overflow: hidden;
+      margin: 15px auto; background: #222; border: 2px solid var(--accent-soft);
+    }
+    #webcam-box video { width: 100%; height: 100%; object-fit: cover; }
+    .gate-msg { font-size: 14px; font-weight: 600; color: var(--primary-button); margin-top: 10px; }
+
+    /* --- 2. Header & แถบวันครบรอบ --- */
+    header {
+      background: var(--panel); padding: 12px 24px; display: flex;
+      justify-content: space-between; align-items: center;
+      border-bottom: 1px solid #e9ecef; position: sticky; top: 0; z-index: 100;
+    }
+    .anniversary-badge {
+      text-align: center; background: #edf2f4; padding: 6px 16px;
+      border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-main);
+    }
+    .weather-widget { font-size: 12px; color: var(--text-sub); text-align: right; }
+
+    /* --- 3. Layout หลัก --- */
+    .container {
+      max-width: 1000px; margin: 20px auto; padding: 0 20px;
+      display: grid; grid-template-columns: 280px 1fr; gap: 20px;
+    }
+
+    /* การ์ดสถานะของเรา */
+    .status-card {
+      background: var(--panel); border-radius: var(--radius); padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: fit-content;
+    }
+    .status-badge {
+      display: inline-block; padding: 4px 10px; background: #e8f5e9;
+      color: #2e7d32; border-radius: 12px; font-size: 12px; font-weight: bold; margin-top: 8px;
+    }
+
+    /* กล่องแชต */
+    .chat-card {
+      background: var(--panel); border-radius: var(--radius); height: 550px;
+      display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.4; }
+    .msg.user { align-self: flex-end; background: var(--primary-button); color: white; }
+    .msg.bot { align-self: flex-start; background: var(--chat-bot); color: var(--text-main); border: 1px solid #e9ecef; }
+    .chat-input { padding: 12px; border-top: 1px solid #e9ecef; display: flex; gap: 8px; }
+    .chat-input input { flex: 1; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; outline: none; }
+    .chat-input button { padding: 10px 18px; background: var(--primary-button); color: white; border: none; border-radius: 8px; cursor: pointer; }
+  </style>
 </head>
-<body class="bg-pink-50 text-gray-700 min-h-screen flex flex-col items-center justify-center p-6">
+<body>
 
-    <!-- 🌸 หัวข้อหลักกลางหน้าจอ -->
-    <div class="text-center mb-10">
-        <h1 class="text-4xl font-bold text-pink-600 drop-shadow-sm">Happy Anniversary ❤️</h1>
-        <p class="text-xl text-gray-500 mt-2">เค้ามีความลับซ่อนอยู่ในกล่องพวกนี้ ลองกดเปิดดูสิคะ</p>
+  <!-- 1. ประตูสแกนรอยยิ้ม -->
+  <div id="smile-gate">
+    <div class="gate-card">
+      <h3>😊 สแกนรอยยิ้มก่อนเข้าสเปซนะ</h3>
+      <p style="font-size: 12px; color: var(--text-sub); margin-top:4px;">ยิ้มหวานๆ ให้กล้องหน่อยเร็วคนเก่ง</p>
+      <div id="webcam-box">
+        <video id="video" autoplay muted></video>
+      </div>
+      <div class="gate-msg" id="gate-status">กำลังเริ่มต้นกล้อง...</div>
+    </div>
+  </div>
+
+  <!-- 2. ส่วนแถบบนสุด (Header) -->
+  <header>
+    <!-- ตัวเครื่องเล่นเพลง -->
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button id="music-btn" onclick="toggleMusic()" style="padding:6px 12px; border-radius:15px; border:none; cursor:pointer;">🎵 เล่นเพลง</button>
+      <audio id="bg-music" loop></audio>
     </div>
 
-    <!-- 📦 โซนกล่องของขวัญให้กด (Clickable Cards) -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-3xl px-4">
+    <!-- วันครบรอบ (อยู่ตรงกลาง) -->
+    <div class="anniversary-badge">
+      ❤️ อยู่ด้วยกันมาแล้ว <span id="days-count">0</span> วัน
+    </div>
+
+    <!-- สภาพอากาศ นครพนม -->
+    <div class="weather-widget" id="weather-box">
+      📍 นครพนม: กำลังโหลดอากาศ...
+    </div>
+  </header>
+
+  <!-- 3. ส่วนเนื้อหาหลัก -->
+  <div class="container">
+    
+    <!-- การ์ดบอกสถานะของเรา (อัปเดตจากหลังบ้าน) -->
+    <div class="status-card">
+      <h4 style="color: var(--text-sub); font-size: 12px;">STATUS UPDATE</h4>
+      <h3 id="my-status-title" style="margin-top: 5px;">กำลังโหลด...</h3>
+      <p id="my-status-detail" style="font-size: 13px; color: var(--text-sub); margin-top: 4px;">-</p>
+      <div class="status-badge" id="my-status-time">อัปเดตล่าสุด: -</div>
+    </div>
+
+    <!-- บอร์ดแชตคุยกับ AI ตัวแทนของเรา -->
+    <div class="chat-card">
+      <div class="chat-messages" id="chat-box">
+        <div class="msg bot">สวัสดีค่ะยินดีต้อนรับเข้าสู่สเปซของเรานะคะ คิดถึงจัง วันนี้เป็นไงบ้างเอ่ย? 💭</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="user-msg" placeholder="พิมพ์คุยตรงนี้ได้เลยนะคะ..." onkeydown="if(event.key==='Enter') sendMsg()">
+        <button onclick="sendMsg()">ส่ง</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Config Supabase & Gemini Key
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+    const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
+    const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
+    
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // --- 1. คำนวณวันครบรอบ ---
+    const START_DATE = new Date("2024-01-01"); // 👈 กำหนดวันครบรอบตรงนี้ (ปี-เดือน-วัน)
+    function updateAnniversary() {
+      const now = new Date();
+      const diffTime = Math.abs(now - START_DATE);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      document.getElementById('days-count').innerText = diffDays;
+    }
+
+    // --- 2. สภาพอากาศ นครพนม (Open-Meteo API ฟรี ไม่ต้องสมัคร Key) ---
+    async function fetchNakhonPhanomWeather() {
+      try {
+        // พิกัด จ.นครพนม (Lat: 17.39, Lon: 104.77)
+        const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=17.39&longitude=104.77&current_weather=true");
+        const data = await res.json();
+        const code = data.current_weather.weathercode;
+        const temp = data.current_weather.temperature;
         
-        <!-- กล่องที่ 1: เรื่องราวของเรา -->
-        <button onclick="openModal('🏠 เรื่องราวของเรา', 'ขอบคุณที่อยู่ข้างกันและคอยเป็นความสุขให้กันเสมอนะคะ ยินดีด้วยกับอีกหนึ่งปีที่น่ารักของเรานะเธอ! ดีใจที่มีเธอในชีวิตที่สุดเลย', 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500')" 
-                class="bg-white p-8 rounded-2xl shadow-md border-2 border-pink-200 hover:border-pink-400 hover:scale-105 transition transform text-center flex flex-col items-center justify-center space-y-3 cursor-pointer group">
-            <span class="text-5xl group-hover:animate-bounce">🎁</span>
-            <span class="text-xl font-bold text-pink-500">เปิดกล่องที่ 1</span>
-            <span class="text-sm text-gray-400">เรื่องราวของเรา</span>
-        </button>
+        let weatherText = `🌤️ ${temp}°C`;
+        let careMsg = "วันนี้อากาศดี ดูแลสุขภาพด้วยนะคะ";
 
-        <!-- กล่องที่ 2: ความทรงจำดีๆ -->
-        <button onclick="openModal('📸 ความทรงจำดีๆ', 'จำได้ไหมวันนั้นที่ไปเที่ยวด้วยกัน สนุกมากเลยเนอะ ลมเย็นๆ กับมือที่จับกันไว้ มันดีที่สุดในโลกเลยล่ะ อยากไปเที่ยวกับเธออีกบ่อยๆ เลย', 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500')" 
-                class="bg-white p-8 rounded-2xl shadow-md border-2 border-pink-200 hover:border-pink-400 hover:scale-105 transition transform text-center flex flex-col items-center justify-center space-y-3 cursor-pointer group">
-            <span class="text-5xl group-hover:animate-bounce">💌</span>
-            <span class="text-xl font-bold text-pink-500">เปิดกล่องที่ 2</span>
-            <span class="text-sm text-gray-400">ความทรงจำของเรา</span>
-        </button>
-
-        <!-- กล่องที่ 3: จดหมายความในใจ (แบบไม่ใส่รูป โชว์เฉพาะข้อความหวานๆ) -->
-        <button onclick="openModal('💖 ถึง...คนเก่งของเค้า', 'อยากบอกว่าขอบคุณมากๆ เลยนะสำหรับทุกอย่างที่ผ่านมา ขอบคุณที่เป็นทั้งแฟน เป็นเซฟโซนที่ดีที่สุดให้เค้าเสมอ เวลาที่เธอหัวเราะน่ะน่ารักที่สุดในโลกเลยรู้ไหม\n\nปีนี้และปีต่อๆ ไป ก็ขอให้เราจับมือกันแน่นๆ แบบนี้ เติบโตไปด้วยกันนะ เค้ารักเธอที่สุดในโลกเลยค่ะ! 🥰', '')" 
-                class="bg-white p-8 rounded-2xl shadow-md border-2 border-pink-200 hover:border-pink-400 hover:scale-105 transition transform text-center flex flex-col items-center justify-center space-y-3 cursor-pointer group">
-            <span class="text-5xl group-hover:animate-bounce">💝</span>
-            <span class="text-xl font-bold text-pink-500">เปิดกล่องที่ 3</span>
-            <span class="text-sm text-gray-400">จดหมายความในใจ</span>
-        </button>
-
-    </div>
-
-    <!-- 🛍️ กล่องข้อความ Pop-up (Modal) ที่จะเด้งขึ้นมาเมื่อกด -->
-    <div id="messageModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 hidden z-50 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl transform transition-all p-6 relative">
-            
-            <!-- ปุ่มกากบาทสำหรับปิดกล่อง -->
-            <button onclick="closeModal()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-            
-            <!-- หัวข้อในกล่องข้อความ -->
-            <h3 id="modalTitle" class="text-2xl font-bold text-pink-600 text-center mb-4"></h3>
-            
-            <!-- โซนแสดงรูปภาพ (จะซ่อนอัติโนมัติถ้าไม่มีการใส่ลิงก์รูป) -->
-            <div id="modalImgContainer" class="mb-4 hidden overflow-hidden rounded-xl max-h-52 shadow-inner">
-                <img id="modalImg" src="" alt="Memory Image" class="w-full h-full object-cover">
-            </div>
-            
-            <!-- โซนแสดงเนื้อหาข้อความ -->
-            <p id="modalText" class="text-gray-600 text-center leading-relaxed whitespace-pre-line text-lg bg-pink-50 p-4 rounded-xl"></p>
-            
-            <!-- ปุ่มปิดด้านล่าง -->
-            <div class="mt-6 text-center">
-                <button onclick="closeModal()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-8 rounded-full shadow-md transition transform hover:scale-105">
-                    ปิดกล่องความรัก 💖
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 🎵 ส่วนท้ายเว็บ -->
-    <footer class="text-center mt-12 text-xs text-gray-400">
-        Made with ❤️ for you
-    </footer>
-
-    <!-- 🛠️ JavaScript ควบคุมการเปิด-ปิดกล่องข้อความ Pop-up -->
-    <script>
-        function openModal(title, text, imgSrc) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalText').innerText = text;
-            
-            const imgContainer = document.getElementById('modalImgContainer');
-            const img = document.getElementById('modalImg');
-            
-            // เช็คว่ามีรูปส่งมาไหม ถ้ามีให้โชว์ ถ้าไม่มีให้ซ่อนกล่องรูป
-            if (imgSrc) {
-                img.src = imgSrc;
-                imgContainer.classList.remove('hidden');
-            } else {
-                imgContainer.classList.add('hidden');
-            }
-            
-            // แสดง Pop-up
-            document.getElementById('messageModal').classList.remove('hidden');
+        // รหัสสภาพอากาศที่มีฝน (Rain / Drizzle / Thunderstorm)
+        if ([51, 53, 55, 61, 63, 65, 80, 81, 82, 95].includes(code)) {
+          weatherText = `🌧️ ฝนตก (${temp}°C)`;
+          careMsg = "วันนี้พกร่มด้วยนะคะ อย่าตากฝนน้า เค้าเป็นห่วง 🥺";
         }
 
-        function closeModal() {
-            // ซ่อน Pop-up
-            document.getElementById('messageModal').classList.add('hidden');
-        }
-        
-        // พิเศษ: ถ้าคลิกพื้นที่ว่างข้างนอกกล่อง Pop-up ก็จะปิดให้เองอัตโนมัติด้วยค่ะ
-        window.onclick = function(event) {
-            const modal = document.getElementById('messageModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-    </script>
+        document.getElementById('weather-box').innerHTML = `📍 นครพนม: ${weatherText}<br><span style="color:#e63946;">${careMsg}</span>`;
+      } catch (e) {
+        document.getElementById('weather-box').innerText = "📍 นครพนม: ไม่สามารถดึงสภาพอากาศได้";
+      }
+    }
+
+    // --- 3. Smile Gate (สแกนรอยยิ้มก่อนเข้า) ---
+    async function initSmileGate() {
+      const video = document.getElementById('video');
+      const status = document.getElementById('gate-status');
+
+      await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
+      await faceapi.nets.faceExpressionNet.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
+
+      navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => {
+        video.srcObject = stream;
+        status.innerText = "มองกล้องแล้วยิ้มหวานๆ หน่อยน้า 😊";
+      });
+
+      video.addEventListener('play', () => {
+        const interval = setInterval(async () => {
+          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+          if (detections.length > 0 && detections[0].expressions.happy > 0.75) {
+            status.innerText = "✨ รอยยิ้มผ่านแล้ว! ยินดีต้อนรับเข้าสู่สเปซของเรานะคะ 🎉";
+            status.style.color = "#2e7d32";
+            clearInterval(interval);
+            setTimeout(() => {
+              document.getElementById('smile-gate').style.opacity = '0';
+              setTimeout(() => document.getElementById('smile-gate').style.display = 'none', 500);
+            }, 1200);
+          }
+        }, 400);
+      });
+    }
+
+    // --- 4. ดึงเพลง & สถานะจาก Supabase Realtime ---
+    async function loadBackendData() {
+      // ดึงข้อมูลเพลงล่าสุด
+      const { data: songs } = await sb.from('settings').select('value').eq('key', 'active_song').single();
+      if (songs) {
+        document.getElementById('bg-music').src = songs.value;
+      }
+
+      // ดึงสถานะปัจจุบัน
+      const { data: status } = await sb.from('my_status').select('*').order('created_at', { ascending: false }).limit(1).single();
+      if (status) {
+        document.getElementById('my-status-title').innerText = status.title;
+        document.getElementById('my-status-detail').innerText = status.detail;
+        document.getElementById('my-status-time').innerText = "อัปเดตเมื่อ: " + new Date(status.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      }
+    }
+
+    function toggleMusic() {
+      const audio = document.getElementById('bg-music');
+      const btn = document.getElementById('music-btn');
+      if (audio.paused) {
+        audio.play();
+        btn.innerText = "⏸️ พักเพลง";
+      } else {
+        audio.pause();
+        btn.innerText = "🎵 เล่นเพลง";
+      }
+    }
+
+    // --- 5. AI Chatbot (สไตล์การพูดอิงตามบุคลิกผู้ใช้) ---
+    const SYSTEM_PROMPT = `คุณคือ AI ตัวแทนแฟนหนุ่ม (นักศึกษาวิศวะคอมฯ/IT ชอบทำโปรเจกต์ ลอจิกแน่น เล่นเกม Minecraft มีความกวนๆ ติดเล่น แต่ใจดีและอบอุ่น)
+พูดจาเป็นกันเอง ใช้สรรพนามแทนตัวเองว่า "เค้า" หรือ "พี่" แล้วแต่จังหวะ และเรียกแฟนว่า "ตัวเล็ก" หรือชื่อแฟน
+ถ้าแฟนถามว่าทำอะไรอยู่ ให้บอกสถานะการทำงานปัจจุบันแบบอบอุ่น และใส่ใจเรื่องสภาพอากาศฝนตกเสมอ`;
+
+    let chatHistory = [];
+
+    async function sendMsg() {
+      const input = document.getElementById('user-msg');
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendMsg(text, 'user');
+      input.value = '';
+      chatHistory.push({ role: "user", parts: [{ text }] });
+
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            contents: chatHistory
+          })
+        });
+        const data = await res.json();
+        const reply = data.candidates[0].content.parts[0].text;
+        appendMsg(reply, 'bot');
+        chatHistory.push({ role: "model", parts: [{ text: reply }] });
+
+        // บันทึกประวัติแชตลง Supabase Database
+        await sb.from('chat_logs').insert([{ user_msg: text, bot_reply: reply }]);
+      } catch (e) {
+        appendMsg("ขออภัยนะคนเก่ง ระบบ AI ขัดข้องชั่วคราวค่ะ 🥺", 'bot');
+      }
+    }
+
+    function appendMsg(text, sender) {
+      const box = document.getElementById('chat-box');
+      const div = document.createElement('div');
+      div.className = `msg ${sender}`;
+      div.innerText = text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // Init
+    window.onload = () => {
+      updateAnniversary();
+      fetchNakhonPhanomWeather();
+      initSmileGate();
+      loadBackendData();
+    };
+  </script>
 </body>
 </html>
