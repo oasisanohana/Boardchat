@@ -112,18 +112,15 @@
 
   <!-- 2. ส่วนแถบบนสุด (Header) -->
   <header>
-    <!-- ตัวเครื่องเล่นเพลง -->
     <div style="display: flex; align-items: center; gap: 8px;">
       <button id="music-btn" onclick="toggleMusic()" style="padding:6px 12px; border-radius:15px; border:none; cursor:pointer; background:#e9ecef;">🎵 เล่นเพลง</button>
       <audio id="bg-music" loop></audio>
     </div>
 
-    <!-- วันครบรอบ (อยู่ตรงกลาง) -->
     <div class="anniversary-badge">
       ❤️ อยู่ด้วยกันมาแล้ว <span id="days-count">0</span> วัน
     </div>
 
-    <!-- สภาพอากาศ นครพนม -->
     <div class="weather-widget" id="weather-box">
       📍 นครพนม: กำลังโหลดอากาศ...
     </div>
@@ -131,8 +128,6 @@
 
   <!-- 3. ส่วนเนื้อหาหลัก -->
   <div class="container">
-    
-    <!-- การ์ดบอกสถานะของเรา (อัปเดตจากหลังบ้าน) -->
     <div class="status-card">
       <h4 style="color: var(--text-sub); font-size: 12px;">STATUS UPDATE</h4>
       <h3 id="my-status-title" style="margin-top: 5px;">กำลังทำงาน...</h3>
@@ -140,7 +135,6 @@
       <div class="status-badge" id="my-status-time">อัปเดตล่าสุด: เมื่อสักครู่</div>
     </div>
 
-    <!-- บอร์ดแชตคุยกับ AI ตัวแทนของเรา -->
     <div class="chat-card">
       <div class="chat-messages" id="chat-box">
         <div class="msg bot">สวัสดีค่ะยินดีต้อนรับเข้าสู่สเปซของเรานะคะ คิดถึงจัง วันนี้เป็นไงบ้างเอ่ย? 💭</div>
@@ -150,11 +144,9 @@
         <button onclick="sendMsg()">ส่ง</button>
       </div>
     </div>
-
   </div>
 
   <script>
-    // Config Supabase & Gemini Key
     const SUPABASE_URL = "YOUR_SUPABASE_URL";
     const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
     const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
@@ -164,8 +156,7 @@
       sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
-    // --- 1. คำนวณวันครบรอบ ---
-    const START_DATE = new Date("2024-01-01"); // 👈 กำหนดวันครบรอบตรงนี้ (ปี-เดือน-วัน)
+    const START_DATE = new Date("2024-01-01");
     function updateAnniversary() {
       const now = new Date();
       const diffTime = Math.abs(now - START_DATE);
@@ -173,7 +164,6 @@
       document.getElementById('days-count').innerText = diffDays;
     }
 
-    // --- 2. สภาพอากาศ นครพนม ---
     async function fetchNakhonPhanomWeather() {
       try {
         const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=17.39&longitude=104.77&current_weather=true");
@@ -195,17 +185,18 @@
       }
     }
 
-    // --- 3. Smile Gate (ปุ่มกดเปิดกล้องแก้ปัญหา Permissions) ---
+    // --- Smile Gate Fix ---
     async function startCameraProcess() {
       const video = document.getElementById('video');
       const status = document.getElementById('gate-status');
       const startBtn = document.getElementById('start-cam-btn');
 
+      // 1. ซ่อนปุ่มทันทีที่กด
       startBtn.style.display = 'none';
+      status.innerText = "กำลังขออนุญาตเปิดกล้อง...";
 
       try {
-        status.innerText = "กำลังขออนุญาตเปิดกล้อง...";
-
+        // 2. ขอสิทธิ์และเปิดกล้อง
         const stream = await navigator.mediaDevices.getUserMedia({ 
           video: { width: 320, height: 240, facingMode: "user" } 
         });
@@ -213,12 +204,14 @@
         video.srcObject = stream;
         status.innerText = "กำลังโหลดระบบ AI สแกนใบหน้า...";
 
+        // 3. โหลดโมเดล
         const MODEL_URL = 'https://cdn.jsdelivr.net/gh/cddlib/face-api.js@master/weights';
         await Promise.all([
           faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
           faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
         ]);
 
+        // 4. เมื่อพร้อมแล้วอัปเดตข้อความทันที
         status.innerText = "มองกล้องแล้วยิ้มหวานๆ หน่อยน้า 😊";
 
         video.addEventListener('play', () => {
@@ -257,7 +250,6 @@
       }
     }
 
-    // --- 4. ดึงข้อมูลจาก Supabase ---
     async function loadBackendData() {
       if (!sb) return;
       try {
@@ -291,7 +283,6 @@
       }
     }
 
-    // --- 5. AI Chatbot ---
     const SYSTEM_PROMPT = `คุณคือ AI ตัวแทนแฟนหนุ่ม (นักศึกษาวิศวะคอมฯ/IT ชอบทำโปรเจกต์ ลอจิกแน่น เล่นเกม Minecraft มีความกวนๆ ติดเล่น แต่ใจดีและอบอุ่น)
 พูดจาเป็นกันเอง ใช้สรรพนามแทนตัวเองว่า "เค้า" หรือ "พี่" แล้วแต่จังหวะ และเรียกแฟนว่า "ตัวเล็ก" หรือชื่อแฟน
 ถ้าแฟนถามว่าทำอะไรอยู่ ให้บอกสถานะการทำงานปัจจุบันแบบอบอุ่น และใส่ใจเรื่องสภาพอากาศฝนตกเสมอ`;
@@ -341,7 +332,6 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    // Init
     window.addEventListener('DOMContentLoaded', () => {
       updateAnniversary();
       fetchNakhonPhanomWeather();
