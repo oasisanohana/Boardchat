@@ -59,7 +59,7 @@
       max-width: 380px; width: 100%;
     }
     .gate-card h3 { font-size: 20px; color: var(--text-main); margin-bottom: 6px; }
-    
+
     #webcam-box {
       width: 100%; height: 230px; border-radius: 16px; overflow: hidden;
       margin: 18px 0; background: #000; border: 3px solid #fff;
@@ -79,6 +79,37 @@
       width: 100%; margin-top: 15px;
     }
     .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* --- 1b. หน้าพิเศษวันครบรอบ --- */
+    #anniversary-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: var(--primary-gradient);
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 10000; text-align: center; padding: 24px; color: white;
+      overflow: hidden;
+    }
+    #anniversary-overlay .confetti-emoji {
+      position: absolute; top: -40px; font-size: 22px;
+      animation: fall linear forwards;
+      opacity: 0.9;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(360deg); opacity: 0.4; }
+    }
+    #anniversary-overlay .anniv-content {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: var(--radius-lg);
+      padding: 40px 28px;
+      max-width: 420px; width: 100%;
+      z-index: 2;
+    }
+    #anniversary-overlay h1 { font-size: 26px; margin-bottom: 10px; }
+    #anniversary-overlay p { font-size: 14px; opacity: 0.9; line-height: 1.6; margin-bottom: 6px; }
+    #anniversary-overlay .anniv-years { font-size: 46px; font-weight: 600; margin: 10px 0; }
+    #anniversary-overlay .btn-primary { background: white; color: #667eea; box-shadow: none; }
 
     /* --- 2. Header แถบบน --- */
     header {
@@ -89,6 +120,7 @@
       border-bottom: var(--panel-border);
       position: sticky; top: 0; z-index: 100;
       box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+      flex-wrap: wrap; gap: 8px;
     }
     .music-btn {
       background: #ffffff; border: 1px solid #e2e8f0;
@@ -113,15 +145,21 @@
       display: grid; grid-template-columns: 300px 1fr; gap: 20px;
       flex: 1;
     }
+    .sidebar-col { display: flex; flex-direction: column; gap: 20px; }
+
+    .wide-section {
+      max-width: 1000px; width: 100%; margin: 0 auto 24px auto; padding: 0 20px;
+    }
 
     @media (max-width: 768px) {
       .container { grid-template-columns: 1fr; margin: 12px auto; padding: 0 12px; }
+      .wide-section { padding: 0 12px; margin-bottom: 16px; }
       header { padding: 12px 16px; }
       .weather-widget { display: none; } /* ซ่อนสภาพอากาศบนมือถือจอเล็กเพื่อความคลีน */
     }
 
     /* --- 4. การ์ดสถานะ (Status Card) --- */
-    .status-card {
+    .status-card, .anniv-card {
       background: var(--panel-bg);
       border-radius: var(--radius-lg);
       padding: 24px;
@@ -130,18 +168,25 @@
       backdrop-filter: blur(10px);
       height: fit-content;
     }
-    .status-card h4 {
+    .status-card h4, .anniv-card h4 {
       font-size: 11px; letter-spacing: 1px; color: var(--text-sub);
       text-transform: uppercase; font-weight: 600; margin-bottom: 8px;
     }
     .status-card h3 { font-size: 18px; color: var(--text-main); font-weight: 600; }
     .status-card p { font-size: 13px; color: var(--text-sub); margin-top: 6px; line-height: 1.5; }
-    
+
     .status-badge {
       display: inline-block; padding: 4px 12px;
       background: #e6fffa; color: #234e52;
       border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 12px;
     }
+
+    /* --- 4b. การ์ดนับถอยหลังวันครบรอบถัดไป --- */
+    .anniv-card .anniv-date { font-size: 14px; color: var(--text-main); font-weight: 500; margin-bottom: 12px; }
+    .anniv-countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .anniv-countdown .unit { text-align: center; background: #f7fafc; border-radius: 10px; padding: 8px 4px; }
+    .anniv-countdown .unit .num { font-size: 18px; font-weight: 600; color: var(--primary-color); display: block; }
+    .anniv-countdown .unit .label { font-size: 10px; color: var(--text-sub); }
 
     /* --- 5. กล่องแชต (Chat Card) --- */
     .chat-card {
@@ -152,7 +197,20 @@
       backdrop-filter: blur(10px);
       height: 560px;
       display: flex; flex-direction: column; overflow: hidden;
+      transition: opacity 0.2s ease;
     }
+    .chat-card-header {
+      padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #edf2f7; flex-shrink: 0;
+    }
+    .chat-card-header span { font-size: 13px; font-weight: 600; color: var(--text-main); }
+    .chat-collapse-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 16px; color: var(--text-sub); padding: 4px 8px; border-radius: 8px;
+      transition: background 0.15s ease;
+    }
+    .chat-collapse-btn:hover { background: #f7fafc; }
+
     .chat-messages {
       flex: 1; padding: 20px; overflow-y: auto;
       display: flex; flex-direction: column; gap: 12px;
@@ -177,7 +235,7 @@
     /* ช่องพิมพ์แชต */
     .chat-input {
       padding: 14px 16px; background: rgba(255,255,255,0.7);
-      border-top: 1px solid #edf2f7; display: flex; gap: 10px;
+      border-top: 1px solid #edf2f7; display: flex; gap: 10px; flex-shrink: 0;
     }
     .chat-input input {
       flex: 1; padding: 12px 18px;
@@ -192,6 +250,80 @@
       font-weight: 500; cursor: pointer; transition: transform 0.1s ease;
     }
     .chat-input button:active { transform: scale(0.95); }
+
+    /* พับเก็บแชต */
+    .chat-card.collapsed .chat-messages,
+    .chat-card.collapsed .chat-input { display: none; }
+    .chat-card.collapsed { height: auto; }
+
+    #chat-reopen-btn {
+      position: fixed; bottom: 24px; right: 24px;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--primary-gradient); color: white;
+      border: none; font-size: 24px; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.45);
+      display: none; align-items: center; justify-content: center;
+      z-index: 500; transition: transform 0.15s ease;
+    }
+    #chat-reopen-btn:hover { transform: scale(1.06); }
+    #chat-reopen-btn.show { display: flex; }
+
+    /* --- 6. แกลเลอรีรูปความทรงจำ --- */
+    .gallery-card {
+      background: var(--panel-bg);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--panel-shadow);
+      border: var(--panel-border);
+      backdrop-filter: blur(10px);
+    }
+    .gallery-card h4 {
+      font-size: 11px; letter-spacing: 1px; color: var(--text-sub);
+      text-transform: uppercase; font-weight: 600; margin-bottom: 14px;
+    }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+    .gallery-grid img {
+      width: 100%; height: 130px; object-fit: cover; border-radius: 12px;
+      cursor: pointer; transition: transform 0.15s ease; background: #edf2f7;
+    }
+    .gallery-grid img:hover { transform: scale(1.03); }
+    .gallery-empty { font-size: 13px; color: var(--text-sub); }
+
+    #lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9998; padding: 20px;
+    }
+    #lightbox.show { display: flex; }
+    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 12px; }
+    #lightbox-close {
+      position: absolute; top: 20px; right: 24px;
+      background: rgba(255,255,255,0.15); color: white; border: none;
+      width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer;
+    }
+
+    /* --- 7. แผงแอดมิน (เข้าถึงด้วย ?admin=1) --- */
+    #admin-panel {
+      display: none;
+      background: var(--panel-bg);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--panel-shadow);
+      border: 1px dashed #a0aec0;
+      margin-bottom: 20px;
+    }
+    #admin-panel.show { display: block; }
+    #admin-panel h4 { font-size: 13px; margin-bottom: 12px; color: var(--text-main); }
+    #admin-panel label { font-size: 12px; color: var(--text-sub); display: block; margin: 10px 0 4px; }
+    #admin-panel input[type="text"], #admin-panel textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 10px;
+      font-family: inherit; font-size: 13px; outline: none;
+    }
+    #admin-panel textarea { resize: vertical; min-height: 60px; }
+    #admin-status-msg { font-size: 12px; margin-top: 8px; color: var(--text-sub); }
   </style>
 </head>
 <body>
@@ -201,13 +333,13 @@
     <div class="gate-card">
       <h3>😊 สแกนรอยยิ้มก่อนเข้าสเปซนะ</h3>
       <p style="font-size: 13px; color: var(--text-sub);">ยิ้มหวานๆ ให้กล้องหน่อยเร็วคนเก่ง</p>
-      
+
       <div id="webcam-box">
         <video id="video" autoplay muted playsinline></video>
       </div>
 
       <div class="gate-msg" id="gate-status">พร้อมแล้วกดปุ่มด้านล่างเพื่อเปิดกล้องน้า</div>
-      
+
       <button class="btn-primary" id="start-cam-btn" onclick="startCameraProcess()">
         📷 เปิดกล้องสแกนยิ้ม
       </button>
@@ -215,6 +347,16 @@
       <p onclick="bypassGate()" style="margin-top: 16px; font-size: 12px; color: var(--text-sub); cursor: pointer; text-decoration: underline;">
         (กดตรงนี้เพื่อข้ามเข้าสเปซได้เลยค่ะ)
       </p>
+    </div>
+  </div>
+
+  <!-- 1b. หน้าพิเศษวันครบรอบ (โผล่ครั้งแรกของวันที่ตรงกับวันครบรอบ) -->
+  <div id="anniversary-overlay">
+    <div class="anniv-content">
+      <h1>🎉 สุขสันต์วันครบรอบนะคะ 🎉</h1>
+      <div class="anniv-years" id="anniv-years-count">0</div>
+      <p>ปีที่เราอยู่ด้วยกัน คิดถึงและรักเสมอนะคะ 🤍</p>
+      <button class="btn-primary" onclick="closeAnniversaryOverlay()">เข้าสเปซของเรา</button>
     </div>
   </div>
 
@@ -234,19 +376,56 @@
     </div>
   </header>
 
+  <!-- 7. แผงแอดมิน (ซ่อนอยู่ ต้องเข้าด้วย ?admin=1 ต่อท้ายลิงก์เว็บ) -->
+  <div class="wide-section">
+    <div id="admin-panel">
+      <h4>⚙️ แผงแอดมิน (แก้สถานะ / อัปโหลดรูป) — มองเห็นเฉพาะตอนเปิดลิงก์ที่มี ?admin=1 เท่านั้น</h4>
+
+      <label>หัวข้อสถานะ</label>
+      <input type="text" id="admin-status-title" placeholder="เช่น กำลังทำโปรเจกต์อยู่">
+      <label>รายละเอียด</label>
+      <textarea id="admin-status-detail" placeholder="เช่น เดี๋ยวทักหานะคะ อีกสักพักจะว่างแล้ว"></textarea>
+      <button class="btn-primary" onclick="updateStatus()">💾 อัปเดตสถานะ</button>
+
+      <label>อัปโหลดรูปความทรงจำ</label>
+      <input type="file" id="admin-photo-file" accept="image/*">
+      <button class="btn-primary" onclick="uploadPhoto()">⬆️ อัปโหลดรูป</button>
+
+      <div id="admin-status-msg"></div>
+    </div>
+  </div>
+
   <!-- 3. Layout หลัก -->
   <div class="container">
-    
-    <!-- การ์ดบอกสถานะ -->
-    <div class="status-card">
-      <h4>MY STATUS</h4>
-      <h3 id="my-status-title">กำลังทำงาน...</h3>
-      <p id="my-status-detail">กำลังทำโปรเจกต์อยู่ เดี๋ยวทักหานะคะ</p>
-      <div class="status-badge" id="my-status-time">อัปเดตเมื่อสักครู่</div>
+
+    <div class="sidebar-col">
+      <!-- การ์ดบอกสถานะ -->
+      <div class="status-card">
+        <h4>MY STATUS</h4>
+        <h3 id="my-status-title">กำลังทำงาน...</h3>
+        <p id="my-status-detail">กำลังทำโปรเจกต์อยู่ เดี๋ยวทักหานะคะ</p>
+        <div class="status-badge" id="my-status-time">อัปเดตเมื่อสักครู่</div>
+      </div>
+
+      <!-- การ์ดนับถอยหลังวันครบรอบถัดไป -->
+      <div class="anniv-card">
+        <h4>NEXT ANNIVERSARY</h4>
+        <div class="anniv-date" id="anniv-next-date">กำลังคำนวณ...</div>
+        <div class="anniv-countdown">
+          <div class="unit"><span class="num" id="cd-days">0</span><span class="label">วัน</span></div>
+          <div class="unit"><span class="num" id="cd-hours">0</span><span class="label">ชม.</span></div>
+          <div class="unit"><span class="num" id="cd-mins">0</span><span class="label">นาที</span></div>
+          <div class="unit"><span class="num" id="cd-secs">0</span><span class="label">วินาที</span></div>
+        </div>
+      </div>
     </div>
 
     <!-- กล่องแชตคุยกับ AI -->
-    <div class="chat-card">
+    <div class="chat-card" id="chat-card">
+      <div class="chat-card-header">
+        <span>💬 คุยกับเค้า</span>
+        <button class="chat-collapse-btn" id="chat-toggle-btn" onclick="toggleChat()" title="พับเก็บแชต">➖</button>
+      </div>
       <div class="chat-messages" id="chat-box">
         <div class="msg bot">สวัสดีค่ะยินดีต้อนรับเข้าสู่สเปซของเรานะคะ คิดถึงจัง วันนี้เป็นไงบ้างเอ่ย? 💭</div>
       </div>
@@ -258,22 +437,114 @@
 
   </div>
 
+  <!-- 6. แกลเลอรีรูปความทรงจำ -->
+  <div class="wide-section">
+    <div class="gallery-card">
+      <h4>📷 รูปความทรงจำ</h4>
+      <div class="gallery-grid" id="gallery-grid">
+        <span class="gallery-empty">กำลังโหลดรูป...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ปุ่มลอยเปิดแชตกลับมา (โผล่ตอนพับเก็บแชต) -->
+  <button id="chat-reopen-btn" onclick="toggleChat()" title="เปิดแชต">💬</button>
+
+  <!-- Lightbox ดูรูปเต็มจอ -->
+  <div id="lightbox" onclick="closeLightbox(event)">
+    <button id="lightbox-close" onclick="closeLightbox(event)">✕</button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
   <script>
     const SUPABASE_URL = "YOUR_SUPABASE_URL";
     const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
     const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
-    
+
+    // ชื่อ bucket ที่เก็บรูปความทรงจำใน Supabase Storage (ต้องตั้งเป็น public bucket)
+    const PHOTO_BUCKET = "photos";
+
     let sb = null;
     if (SUPABASE_URL !== "YOUR_SUPABASE_URL") {
       sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
     const START_DATE = new Date("2024-01-01");
+
     function updateAnniversary() {
       const now = new Date();
       const diffTime = Math.abs(now - START_DATE);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       document.getElementById('days-count').innerText = diffDays;
+    }
+
+    // --- นับถอยหลังวันครบรอบถัดไป ---
+    function getNextAnniversary() {
+      const now = new Date();
+      let next = new Date(now.getFullYear(), START_DATE.getMonth(), START_DATE.getDate(), 0, 0, 0);
+      if (next < now) {
+        next = new Date(now.getFullYear() + 1, START_DATE.getMonth(), START_DATE.getDate(), 0, 0, 0);
+      }
+      return next;
+    }
+
+    function updateAnniversaryCountdown() {
+      const next = getNextAnniversary();
+      const now = new Date();
+      const diff = Math.max(0, next - now);
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+
+      document.getElementById('cd-days').innerText = days;
+      document.getElementById('cd-hours').innerText = hours;
+      document.getElementById('cd-mins').innerText = mins;
+      document.getElementById('cd-secs').innerText = secs;
+
+      const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+      document.getElementById('anniv-next-date').innerText =
+        "📅 " + next.toLocaleDateString('th-TH', dateOptions);
+    }
+
+    // --- ตรวจว่าวันนี้ตรงกับวันครบรอบไหม แสดงหน้าพิเศษครั้งแรกของวัน ---
+    function isTodayAnniversary() {
+      const now = new Date();
+      return now.getMonth() === START_DATE.getMonth() && now.getDate() === START_DATE.getDate();
+    }
+
+    function checkAnniversaryToday() {
+      if (!isTodayAnniversary()) return;
+
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const lastShown = localStorage.getItem('annivShownDate');
+      if (lastShown === todayKey) return; // โชว์ไปแล้ววันนี้
+
+      const years = new Date().getFullYear() - START_DATE.getFullYear();
+      document.getElementById('anniv-years-count').innerText = years + " ปี";
+
+      document.getElementById('anniversary-overlay').style.display = 'flex';
+      spawnConfetti();
+      localStorage.setItem('annivShownDate', todayKey);
+    }
+
+    function closeAnniversaryOverlay() {
+      document.getElementById('anniversary-overlay').style.display = 'none';
+    }
+
+    function spawnConfetti() {
+      const overlay = document.getElementById('anniversary-overlay');
+      const emojis = ['🎉', '💖', '✨', '🤍', '🎊'];
+      for (let i = 0; i < 24; i++) {
+        const span = document.createElement('span');
+        span.className = 'confetti-emoji';
+        span.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+        span.style.left = Math.random() * 100 + 'vw';
+        span.style.animationDuration = (3 + Math.random() * 3) + 's';
+        span.style.animationDelay = (Math.random() * 2) + 's';
+        overlay.appendChild(span);
+      }
     }
 
     async function fetchNakhonPhanomWeather() {
@@ -282,7 +553,7 @@
         const data = await res.json();
         const code = data.current_weather.weathercode;
         const temp = data.current_weather.temperature;
-        
+
         let weatherText = `🌤️ ${temp}°C`;
         let careMsg = "วันนี้อากาศดี ดูแลสุขภาพด้วยนะคะ";
 
@@ -300,11 +571,18 @@
     // --- Smile Gate System ---
     let scanInterval = null;
 
-    function bypassGate() {
-      if (scanInterval) clearInterval(scanInterval);
+    function closeGate() {
       const gate = document.getElementById('smile-gate');
       gate.style.opacity = '0';
-      setTimeout(() => gate.style.display = 'none', 500);
+      setTimeout(() => {
+        gate.style.display = 'none';
+        checkAnniversaryToday();
+      }, 500);
+    }
+
+    function bypassGate() {
+      if (scanInterval) clearInterval(scanInterval);
+      closeGate();
     }
 
     async function startCameraProcess() {
@@ -316,10 +594,10 @@
       status.innerText = "กำลังขออนุญาตเปิดกล้อง...";
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { width: 320, height: 240, facingMode: "user" } 
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: 320, height: 240, facingMode: "user" }
         });
-        
+
         video.srcObject = stream;
         await video.play();
 
@@ -334,20 +612,20 @@
         scanInterval = setInterval(async () => {
           try {
             const detections = await faceapi.detectAllFaces(
-              video, 
+              video,
               new faceapi.TinyFaceDetectorOptions()
             ).withFaceExpressions();
 
             if (detections && detections.length > 0) {
               const happyScore = detections[0].expressions.happy;
-              
+
               if (happyScore > 0.5) {
                 status.innerText = "✨ รอยยิ้มผ่านแล้ว! ยินดีต้อนรับนะคะ 🎉";
                 status.style.color = "#38a169";
                 clearInterval(scanInterval);
-                
+
                 stream.getTracks().forEach(track => track.stop());
-                setTimeout(bypassGate, 800);
+                setTimeout(closeGate, 800);
               }
             }
           } catch(e) { console.log("Scanning...", e); }
@@ -379,6 +657,61 @@
       }
     }
 
+    // --- แกลเลอรีรูปความทรงจำ (ดึงจาก Supabase Storage bucket) ---
+    async function loadGallery() {
+      const grid = document.getElementById('gallery-grid');
+      if (!sb) {
+        grid.innerHTML = '<span class="gallery-empty">ยังไม่ได้เชื่อมต่อ Supabase ค่ะ</span>';
+        return;
+      }
+      try {
+        const { data: files, error } = await sb.storage.from(PHOTO_BUCKET).list('', {
+          limit: 100,
+          sortBy: { column: 'created_at', order: 'desc' }
+        });
+        if (error) throw error;
+
+        const images = (files || []).filter(f => f.name && !f.name.startsWith('.'));
+        if (images.length === 0) {
+          grid.innerHTML = '<span class="gallery-empty">ยังไม่มีรูปเลยค่ะ 🥺</span>';
+          return;
+        }
+
+        grid.innerHTML = '';
+        images.forEach(file => {
+          const { data: pub } = sb.storage.from(PHOTO_BUCKET).getPublicUrl(file.name);
+          const img = document.createElement('img');
+          img.src = pub.publicUrl;
+          img.alt = file.name;
+          img.loading = 'lazy';
+          img.onclick = () => openLightbox(pub.publicUrl);
+          grid.appendChild(img);
+        });
+      } catch (e) {
+        console.log("Gallery load error:", e);
+        grid.innerHTML = '<span class="gallery-empty">โหลดรูปไม่สำเร็จ ลองใหม่อีกครั้งนะคะ</span>';
+      }
+    }
+
+    function openLightbox(url) {
+      document.getElementById('lightbox-img').src = url;
+      document.getElementById('lightbox').classList.add('show');
+    }
+    function closeLightbox(e) {
+      if (e) e.stopPropagation();
+      document.getElementById('lightbox').classList.remove('show');
+    }
+
+    // --- พับ/เปิด กล่องแชต ---
+    function toggleChat() {
+      const card = document.getElementById('chat-card');
+      const reopenBtn = document.getElementById('chat-reopen-btn');
+      const toggleBtn = document.getElementById('chat-toggle-btn');
+      const collapsed = card.classList.toggle('collapsed');
+      reopenBtn.classList.toggle('show', collapsed);
+      toggleBtn.innerText = collapsed ? '⬆️' : '➖';
+    }
+
     function toggleMusic() {
       const audio = document.getElementById('bg-music');
       const btn = document.getElementById('music-btn');
@@ -392,6 +725,52 @@
       } else {
         audio.pause();
         btn.innerText = "🎵 เล่นเพลง";
+      }
+    }
+
+    // --- แผงแอดมิน: อัปเดตสถานะ / อัปโหลดรูป (เห็นเฉพาะ ?admin=1) ---
+    function initAdminPanel() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('admin') === '1') {
+        document.getElementById('admin-panel').classList.add('show');
+      }
+    }
+
+    async function updateStatus() {
+      const msgBox = document.getElementById('admin-status-msg');
+      if (!sb) { msgBox.innerText = "ยังไม่ได้เชื่อมต่อ Supabase ค่ะ"; return; }
+
+      const title = document.getElementById('admin-status-title').value.trim();
+      const detail = document.getElementById('admin-status-detail').value.trim();
+      if (!title) { msgBox.innerText = "ใส่หัวข้อสถานะก่อนนะคะ"; return; }
+
+      msgBox.innerText = "กำลังบันทึก...";
+      const { error } = await sb.from('my_status').insert([{ title, detail }]);
+      if (error) {
+        msgBox.innerText = "บันทึกไม่สำเร็จ: " + error.message;
+      } else {
+        msgBox.innerText = "✅ อัปเดตสถานะเรียบร้อยค่ะ";
+        loadBackendData();
+      }
+    }
+
+    async function uploadPhoto() {
+      const msgBox = document.getElementById('admin-status-msg');
+      if (!sb) { msgBox.innerText = "ยังไม่ได้เชื่อมต่อ Supabase ค่ะ"; return; }
+
+      const fileInput = document.getElementById('admin-photo-file');
+      const file = fileInput.files[0];
+      if (!file) { msgBox.innerText = "เลือกไฟล์รูปก่อนนะคะ"; return; }
+
+      msgBox.innerText = "กำลังอัปโหลด...";
+      const fileName = `${Date.now()}_${file.name}`;
+      const { error } = await sb.storage.from(PHOTO_BUCKET).upload(fileName, file);
+      if (error) {
+        msgBox.innerText = "อัปโหลดไม่สำเร็จ: " + error.message;
+      } else {
+        msgBox.innerText = "✅ อัปโหลดรูปเรียบร้อยค่ะ";
+        fileInput.value = '';
+        loadGallery();
       }
     }
 
@@ -446,8 +825,12 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       updateAnniversary();
+      updateAnniversaryCountdown();
+      setInterval(updateAnniversaryCountdown, 1000);
       fetchNakhonPhanomWeather();
       loadBackendData();
+      loadGallery();
+      initAdminPanel();
     });
   </script>
 </body>
