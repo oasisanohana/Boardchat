@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Our Private Space 🤍</title>
 
-  <!-- Google Fonts: Prompt & Sarabun -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Supabase & Face-API.js -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
@@ -36,11 +34,9 @@
       color: var(--text-main);
       font-family: 'Prompt', 'Sarabun', sans-serif;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
     }
 
-    /* --- 1. หน้าสแกนรอยยิ้ม (Smile Gate) --- */
+    /* --- Smile Gate --- */
     #smile-gate {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(245, 247, 250, 0.95);
@@ -68,7 +64,6 @@
     #webcam-box video { width: 100%; height: 100%; object-fit: cover; }
     .gate-msg { font-size: 14px; font-weight: 500; color: #4a5568; margin-top: 8px; min-height: 20px; }
 
-    /* ปุ่มกดหลัก สไตล์ Modern Gradient */
     .btn-primary {
       background: var(--primary-gradient);
       color: white; border: none;
@@ -79,9 +74,13 @@
       width: 100%; margin-top: 15px;
     }
     .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary {
+      background: #fff; color: var(--text-main); border: 1px solid #e2e8f0;
+      padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 500;
+      cursor: pointer;
+    }
 
-    /* --- 1b. หน้าพิเศษวันครบรอบ --- */
+    /* --- Anniversary special overlay --- */
     #anniversary-overlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: var(--primary-gradient);
@@ -91,266 +90,210 @@
     }
     #anniversary-overlay .confetti-emoji {
       position: absolute; top: -40px; font-size: 22px;
-      animation: fall linear forwards;
-      opacity: 0.9;
+      animation: fall linear forwards; opacity: 0.9;
     }
-    @keyframes fall {
-      to { transform: translateY(110vh) rotate(360deg); opacity: 0.4; }
-    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0.4; } }
     #anniversary-overlay .anniv-content {
       background: rgba(255,255,255,0.12);
       backdrop-filter: blur(6px);
       border: 1px solid rgba(255,255,255,0.35);
       border-radius: var(--radius-lg);
-      padding: 40px 28px;
-      max-width: 420px; width: 100%;
-      z-index: 2;
+      padding: 40px 28px; max-width: 420px; width: 100%; z-index: 2;
     }
     #anniversary-overlay h1 { font-size: 26px; margin-bottom: 10px; }
     #anniversary-overlay p { font-size: 14px; opacity: 0.9; line-height: 1.6; margin-bottom: 6px; }
     #anniversary-overlay .anniv-years { font-size: 46px; font-weight: 600; margin: 10px 0; }
     #anniversary-overlay .btn-primary { background: white; color: #667eea; box-shadow: none; }
 
-    /* --- 2. Header แถบบน --- */
-    header {
-      background: var(--panel-bg);
-      backdrop-filter: blur(10px);
-      padding: 14px 24px;
+    /* --- Top utility bar --- */
+    .top-bar {
+      max-width: 1000px; margin: 0 auto; padding: 12px 20px;
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: var(--panel-border);
-      position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
       flex-wrap: wrap; gap: 8px;
     }
     .music-btn {
       background: #ffffff; border: 1px solid #e2e8f0;
-      padding: 8px 16px; border-radius: 20px;
-      font-size: 13px; font-weight: 500; color: var(--text-main);
-      cursor: pointer; transition: all 0.2s ease;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-    }
-    .music-btn:hover { background: #f7fafc; }
-
-    .anniversary-badge {
-      background: var(--primary-gradient);
-      color: white; padding: 6px 18px;
-      border-radius: 20px; font-size: 13px; font-weight: 500;
-      box-shadow: 0 3px 10px rgba(118, 75, 162, 0.25);
+      padding: 7px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 500; color: var(--text-main);
+      cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.03);
     }
     .weather-widget { font-size: 12px; color: var(--text-sub); text-align: right; line-height: 1.3; }
 
-    /* --- 3. Layout หลัก --- */
-    .container {
-      max-width: 1000px; width: 100%; margin: 24px auto; padding: 0 20px;
-      display: grid; grid-template-columns: 300px 1fr; gap: 20px;
-      flex: 1;
-    }
-    .sidebar-col { display: flex; flex-direction: column; gap: 20px; }
-
-    .wide-section {
-      max-width: 1000px; width: 100%; margin: 0 auto 24px auto; padding: 0 20px;
-    }
-
-    @media (max-width: 768px) {
-      .container { grid-template-columns: 1fr; margin: 12px auto; padding: 0 12px; }
-      .wide-section { padding: 0 12px; margin-bottom: 16px; }
-      header { padding: 12px 16px; }
-      .weather-widget { display: none; } /* ซ่อนสภาพอากาศบนมือถือจอเล็กเพื่อความคลีน */
-    }
-
-    /* --- 4. การ์ดสถานะ (Status Card) --- */
-    .status-card, .anniv-card {
-      background: var(--panel-bg);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--panel-shadow);
-      border: var(--panel-border);
-      backdrop-filter: blur(10px);
-      height: fit-content;
-    }
-    .status-card h4, .anniv-card h4 {
-      font-size: 11px; letter-spacing: 1px; color: var(--text-sub);
-      text-transform: uppercase; font-weight: 600; margin-bottom: 8px;
-    }
-    .status-card h3 { font-size: 18px; color: var(--text-main); font-weight: 600; }
-    .status-card p { font-size: 13px; color: var(--text-sub); margin-top: 6px; line-height: 1.5; }
-
-    .status-badge {
-      display: inline-block; padding: 4px 12px;
-      background: #e6fffa; color: #234e52;
-      border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 12px;
-    }
-
-    /* --- 4b. การ์ดนับถอยหลังวันครบรอบถัดไป --- */
-    .anniv-card .anniv-date { font-size: 14px; color: var(--text-main); font-weight: 500; margin-bottom: 12px; }
-    .anniv-countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .anniv-countdown .unit { text-align: center; background: #f7fafc; border-radius: 10px; padding: 8px 4px; }
-    .anniv-countdown .unit .num { font-size: 18px; font-weight: 600; color: var(--primary-color); display: block; }
-    .anniv-countdown .unit .label { font-size: 10px; color: var(--text-sub); }
-
-    /* --- 5. กล่องแชต (Chat Card) --- */
-    .chat-card {
-      background: var(--panel-bg);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--panel-shadow);
-      border: var(--panel-border);
-      backdrop-filter: blur(10px);
-      height: 560px;
-      display: flex; flex-direction: column; overflow: hidden;
-      transition: opacity 0.2s ease;
-    }
-    .chat-card-header {
-      padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #edf2f7; flex-shrink: 0;
-    }
-    .chat-card-header span { font-size: 13px; font-weight: 600; color: var(--text-main); }
-    .chat-collapse-btn {
-      background: none; border: none; cursor: pointer;
-      font-size: 16px; color: var(--text-sub); padding: 4px 8px; border-radius: 8px;
-      transition: background 0.15s ease;
-    }
-    .chat-collapse-btn:hover { background: #f7fafc; }
-
-    .chat-messages {
-      flex: 1; padding: 20px; overflow-y: auto;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .msg {
-      max-width: 80%; padding: 12px 18px; border-radius: 18px;
-      font-size: 14px; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-    }
-    .msg.user {
-      align-self: flex-end;
-      background: var(--primary-gradient);
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
-    .msg.bot {
-      align-self: flex-start;
-      background: var(--chat-bot-bg);
-      color: var(--text-main);
-      border-bottom-left-radius: 4px;
-    }
-
-    /* ช่องพิมพ์แชต */
-    .chat-input {
-      padding: 14px 16px; background: rgba(255,255,255,0.7);
-      border-top: 1px solid #edf2f7; display: flex; gap: 10px; flex-shrink: 0;
-    }
-    .chat-input input {
-      flex: 1; padding: 12px 18px;
-      border: 1px solid #e2e8f0; border-radius: 25px;
-      outline: none; font-size: 14px; font-family: inherit;
-      background: #ffffff; transition: border-color 0.2s;
-    }
-    .chat-input input:focus { border-color: #667eea; }
-    .chat-input button {
-      padding: 0 22px; background: var(--primary-gradient);
-      color: white; border: none; border-radius: 25px;
-      font-weight: 500; cursor: pointer; transition: transform 0.1s ease;
-    }
-    .chat-input button:active { transform: scale(0.95); }
-
-    /* พับเก็บแชต */
-    .chat-card.collapsed .chat-messages,
-    .chat-card.collapsed .chat-input { display: none; }
-    .chat-card.collapsed { height: auto; }
-
-    #chat-reopen-btn {
-      position: fixed; bottom: 24px; right: 24px;
-      width: 58px; height: 58px; border-radius: 50%;
-      background: var(--primary-gradient); color: white;
-      border: none; font-size: 24px; cursor: pointer;
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.45);
-      display: none; align-items: center; justify-content: center;
-      z-index: 500; transition: transform 0.15s ease;
-    }
-    #chat-reopen-btn:hover { transform: scale(1.06); }
-    #chat-reopen-btn.show { display: flex; }
-
-    /* --- 6. แกลเลอรีรูปความทรงจำ --- */
-    .gallery-card {
-      background: var(--panel-bg);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--panel-shadow);
-      border: var(--panel-border);
-      backdrop-filter: blur(10px);
-    }
-    .gallery-card h4 {
-      font-size: 11px; letter-spacing: 1px; color: var(--text-sub);
-      text-transform: uppercase; font-weight: 600; margin-bottom: 14px;
-    }
-    .gallery-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 10px;
-    }
-    .gallery-grid img {
-      width: 100%; height: 130px; object-fit: cover; border-radius: 12px;
-      cursor: pointer; transition: transform 0.15s ease; background: #edf2f7;
-    }
-    .gallery-grid img:hover { transform: scale(1.03); }
-    .gallery-empty { font-size: 13px; color: var(--text-sub); }
-
-    #lightbox {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-      display: none; align-items: center; justify-content: center;
-      z-index: 9998; padding: 20px;
-    }
-    #lightbox.show { display: flex; }
-    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 12px; }
-    #lightbox-close {
-      position: absolute; top: 20px; right: 24px;
-      background: rgba(255,255,255,0.15); color: white; border: none;
-      width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer;
-    }
-
-    /* --- 7. แผงแอดมิน (เข้าถึงด้วย ?admin=1) --- */
+    /* --- Admin panel --- */
+    .wide-section { max-width: 1000px; width: 100%; margin: 0 auto 20px auto; padding: 0 20px; }
     #admin-panel {
       display: none;
-      background: var(--panel-bg);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      box-shadow: var(--panel-shadow);
-      border: 1px dashed #a0aec0;
-      margin-bottom: 20px;
+      background: var(--panel-bg); border-radius: var(--radius-lg); padding: 20px;
+      box-shadow: var(--panel-shadow); border: 1px dashed #a0aec0; margin-bottom: 4px;
     }
     #admin-panel.show { display: block; }
     #admin-panel h4 { font-size: 13px; margin-bottom: 12px; color: var(--text-main); }
+    #admin-panel .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 700px) { #admin-panel .admin-grid { grid-template-columns: 1fr; } }
     #admin-panel label { font-size: 12px; color: var(--text-sub); display: block; margin: 10px 0 4px; }
     #admin-panel input[type="text"], #admin-panel textarea {
       width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 10px;
       font-family: inherit; font-size: 13px; outline: none;
     }
     #admin-panel textarea { resize: vertical; min-height: 60px; }
-    #admin-status-msg { font-size: 12px; margin-top: 8px; color: var(--text-sub); }
+    #admin-status-msg { font-size: 12px; margin-top: 10px; color: var(--text-sub); grid-column: 1 / -1; }
+
+    /* --- Facebook-style profile hero --- */
+    .profile-wrap { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+    .cover-photo {
+      width: 100%; height: 260px; border-radius: var(--radius-lg);
+      background: var(--primary-gradient);
+      background-size: cover; background-position: center;
+      position: relative; overflow: hidden;
+      box-shadow: var(--panel-shadow); border: var(--panel-border);
+    }
+    .cover-photo .cover-hint {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.85); font-size: 13px; text-align: center; padding: 20px;
+    }
+    .profile-header { display: flex; align-items: flex-end; gap: 18px; margin-top: -55px; padding: 0 24px; }
+    .avatar-photo {
+      width: 120px; height: 120px; border-radius: 50%;
+      border: 5px solid #fff; background: var(--primary-gradient);
+      background-size: cover; background-position: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; color: white;
+    }
+    .profile-name-block { padding-bottom: 8px; flex: 1; }
+    .profile-name-block h1 { font-size: 24px; font-weight: 700; color: var(--text-main); }
+    .profile-name-block .profile-sub { font-size: 13px; color: var(--text-sub); margin-top: 4px; }
+    .profile-stats { display: flex; gap: 18px; margin-top: 10px; flex-wrap: wrap; }
+    .profile-stats .stat-chip {
+      background: var(--panel-bg); border: var(--panel-border); border-radius: 14px;
+      padding: 6px 14px; font-size: 12px; font-weight: 500; color: var(--text-main);
+      box-shadow: var(--panel-shadow);
+    }
+    .profile-stats .stat-chip b { color: var(--primary-color); }
+
+    @media (max-width: 600px) {
+      .cover-photo { height: 160px; }
+      .profile-header { margin-top: -40px; padding: 0 12px; gap: 12px; flex-direction: column; align-items: flex-start; }
+      .avatar-photo { width: 90px; height: 90px; }
+      .profile-name-block h1 { font-size: 19px; }
+    }
+
+    /* --- Main content grid --- */
+    .container {
+      max-width: 1000px; width: 100%; margin: 24px auto; padding: 0 20px;
+      display: grid; grid-template-columns: 300px 1fr; gap: 20px;
+    }
+    @media (max-width: 768px) { .container { grid-template-columns: 1fr; margin: 16px auto; padding: 0 12px; } }
+
+    .status-card, .anniv-card, .gallery-card {
+      background: var(--panel-bg); border-radius: var(--radius-lg); padding: 22px;
+      box-shadow: var(--panel-shadow); border: var(--panel-border); height: fit-content;
+    }
+    .status-card h4, .anniv-card h4, .gallery-card h4 {
+      font-size: 11px; letter-spacing: 1px; color: var(--text-sub);
+      text-transform: uppercase; font-weight: 600; margin-bottom: 8px;
+    }
+    .status-card h3 { font-size: 18px; color: var(--text-main); font-weight: 600; }
+    .status-card p { font-size: 13px; color: var(--text-sub); margin-top: 6px; line-height: 1.5; }
+    .status-badge {
+      display: inline-block; padding: 4px 12px; background: #e6fffa; color: #234e52;
+      border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 12px;
+    }
+
+    .sidebar-col { display: flex; flex-direction: column; gap: 20px; }
+
+    .anniv-card .anniv-date { font-size: 14px; color: var(--text-main); font-weight: 500; margin: 8px 0 12px; }
+    .anniv-countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .anniv-countdown .unit { text-align: center; background: #f7fafc; border-radius: 10px; padding: 8px 4px; }
+    .anniv-countdown .unit .num { font-size: 18px; font-weight: 600; color: var(--primary-color); display: block; }
+    .anniv-countdown .unit .label { font-size: 10px; color: var(--text-sub); }
+
+    /* --- Photos module (main column, FB-style grid) --- */
+    .gallery-card .gallery-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .gallery-card .gallery-title-row h4 { margin-bottom: 0; }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    }
+    .gallery-grid img {
+      width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 12px;
+      cursor: pointer; transition: transform 0.15s ease; background: #edf2f7;
+    }
+    .gallery-grid img:hover { transform: scale(1.03); }
+    .gallery-grid .gallery-item-hidden { display: none; }
+    .gallery-empty { font-size: 13px; color: var(--text-sub); grid-column: 1 / -1; }
+
+    #lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center; z-index: 9998; padding: 20px;
+    }
+    #lightbox.show { display: flex; }
+    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 12px; }
+    #lightbox-close {
+      position: absolute; top: 20px; right: 24px; background: rgba(255,255,255,0.15);
+      color: white; border: none; width: 40px; height: 40px; border-radius: 50%;
+      font-size: 18px; cursor: pointer;
+    }
+
+    /* --- Floating Messenger-style chat widget --- */
+    #chat-bubble {
+      position: fixed; bottom: 24px; right: 24px; width: 58px; height: 58px; border-radius: 50%;
+      background: var(--primary-gradient); color: white; border: none; font-size: 24px; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.45); z-index: 500;
+      display: flex; align-items: center; justify-content: center; transition: transform 0.15s ease;
+    }
+    #chat-bubble:hover { transform: scale(1.06); }
+
+    #chat-panel {
+      position: fixed; bottom: 96px; right: 24px; width: 330px; max-width: calc(100vw - 32px);
+      height: 460px; max-height: calc(100vh - 140px);
+      background: var(--panel-bg); backdrop-filter: blur(10px);
+      border-radius: var(--radius-lg); box-shadow: 0 15px 40px rgba(0,0,0,0.18);
+      border: var(--panel-border); display: none; flex-direction: column; overflow: hidden; z-index: 500;
+    }
+    #chat-panel.show { display: flex; }
+    .chat-card-header {
+      padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #edf2f7; flex-shrink: 0; background: rgba(255,255,255,0.6);
+    }
+    .chat-card-header span { font-size: 13px; font-weight: 600; color: var(--text-main); }
+    .chat-collapse-btn {
+      background: none; border: none; cursor: pointer; font-size: 15px; color: var(--text-sub);
+      padding: 4px 8px; border-radius: 8px;
+    }
+    .chat-collapse-btn:hover { background: #f7fafc; }
+    .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 82%; padding: 10px 15px; border-radius: 18px; font-size: 13px; line-height: 1.5; }
+    .msg.user { align-self: flex-end; background: var(--primary-gradient); color: white; border-bottom-right-radius: 4px; }
+    .msg.bot { align-self: flex-start; background: var(--chat-bot-bg); color: var(--text-main); border-bottom-left-radius: 4px; }
+    .chat-input { padding: 12px 14px; background: rgba(255,255,255,0.7); border-top: 1px solid #edf2f7; display: flex; gap: 8px; flex-shrink: 0; }
+    .chat-input input {
+      flex: 1; padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 25px;
+      outline: none; font-size: 13px; font-family: inherit; background: #ffffff;
+    }
+    .chat-input input:focus { border-color: #667eea; }
+    .chat-input button {
+      padding: 0 18px; background: var(--primary-gradient); color: white; border: none;
+      border-radius: 25px; font-weight: 500; cursor: pointer; font-size: 13px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- 1. หน้าสแกนรอยยิ้ม -->
+  <!-- Smile Gate -->
   <div id="smile-gate">
     <div class="gate-card">
       <h3>😊 สแกนรอยยิ้มก่อนเข้าสเปซนะ</h3>
       <p style="font-size: 13px; color: var(--text-sub);">ยิ้มหวานๆ ให้กล้องหน่อยเร็วคนเก่ง</p>
-
-      <div id="webcam-box">
-        <video id="video" autoplay muted playsinline></video>
-      </div>
-
+      <div id="webcam-box"><video id="video" autoplay muted playsinline></video></div>
       <div class="gate-msg" id="gate-status">พร้อมแล้วกดปุ่มด้านล่างเพื่อเปิดกล้องน้า</div>
-
-      <button class="btn-primary" id="start-cam-btn" onclick="startCameraProcess()">
-        📷 เปิดกล้องสแกนยิ้ม
-      </button>
-
+      <button class="btn-primary" id="start-cam-btn" onclick="startCameraProcess()">📷 เปิดกล้องสแกนยิ้ม</button>
       <p onclick="bypassGate()" style="margin-top: 16px; font-size: 12px; color: var(--text-sub); cursor: pointer; text-decoration: underline;">
         (กดตรงนี้เพื่อข้ามเข้าสเปซได้เลยค่ะ)
       </p>
     </div>
   </div>
 
-  <!-- 1b. หน้าพิเศษวันครบรอบ (โผล่ครั้งแรกของวันที่ตรงกับวันครบรอบ) -->
+  <!-- Anniversary special page -->
   <div id="anniversary-overlay">
     <div class="anniv-content">
       <h1>🎉 สุขสันต์วันครบรอบนะคะ 🎉</h1>
@@ -360,46 +303,64 @@
     </div>
   </div>
 
-  <!-- 2. Header -->
-  <header>
-    <div style="display: flex; align-items: center; gap: 8px;">
+  <!-- Top utility bar -->
+  <div class="top-bar">
+    <div style="display:flex; align-items:center; gap:8px;">
       <button class="music-btn" id="music-btn" onclick="toggleMusic()">🎵 เล่นเพลง</button>
       <audio id="bg-music" loop></audio>
     </div>
+    <div class="weather-widget" id="weather-box">📍 นครพนม: กำลังโหลด...</div>
+  </div>
 
-    <div class="anniversary-badge">
-      ❤️ อยู่ด้วยกันมาแล้ว <span id="days-count">0</span> วัน
-    </div>
-
-    <div class="weather-widget" id="weather-box">
-      📍 นครพนม: กำลังโหลด...
-    </div>
-  </header>
-
-  <!-- 7. แผงแอดมิน (ซ่อนอยู่ ต้องเข้าด้วย ?admin=1 ต่อท้ายลิงก์เว็บ) -->
+  <!-- Admin panel (?admin=1 only) -->
   <div class="wide-section">
     <div id="admin-panel">
-      <h4>⚙️ แผงแอดมิน (แก้สถานะ / อัปโหลดรูป) — มองเห็นเฉพาะตอนเปิดลิงก์ที่มี ?admin=1 เท่านั้น</h4>
-
-      <label>หัวข้อสถานะ</label>
-      <input type="text" id="admin-status-title" placeholder="เช่น กำลังทำโปรเจกต์อยู่">
-      <label>รายละเอียด</label>
-      <textarea id="admin-status-detail" placeholder="เช่น เดี๋ยวทักหานะคะ อีกสักพักจะว่างแล้ว"></textarea>
-      <button class="btn-primary" onclick="updateStatus()">💾 อัปเดตสถานะ</button>
-
-      <label>อัปโหลดรูปความทรงจำ</label>
+      <h4>⚙️ แผงแอดมิน — มองเห็นเฉพาะตอนเปิดลิงก์ที่มี ?admin=1 เท่านั้น</h4>
+      <div class="admin-grid">
+        <div>
+          <label>หัวข้อสถานะ</label>
+          <input type="text" id="admin-status-title" placeholder="เช่น กำลังทำโปรเจกต์อยู่">
+          <label>รายละเอียด</label>
+          <textarea id="admin-status-detail" placeholder="เช่น เดี๋ยวทักหานะคะ อีกสักพักจะว่างแล้ว"></textarea>
+          <button class="btn-primary" onclick="updateStatus()">💾 อัปเดตสถานะ</button>
+        </div>
+        <div>
+          <label>รูปปก (Cover)</label>
+          <input type="file" id="admin-cover-file" accept="image/*">
+          <button class="btn-primary" onclick="uploadProfileImage('cover')">⬆️ อัปโหลดรูปปก</button>
+          <label>รูปโปรไฟล์ (Avatar)</label>
+          <input type="file" id="admin-avatar-file" accept="image/*">
+          <button class="btn-primary" onclick="uploadProfileImage('avatar')">⬆️ อัปโหลดรูปโปรไฟล์</button>
+        </div>
+      </div>
+      <label>อัปโหลดรูปความทรงจำ (เข้าแกลเลอรี)</label>
       <input type="file" id="admin-photo-file" accept="image/*">
-      <button class="btn-primary" onclick="uploadPhoto()">⬆️ อัปโหลดรูป</button>
-
+      <button class="btn-primary" onclick="uploadPhoto()">⬆️ อัปโหลดรูปความทรงจำ</button>
       <div id="admin-status-msg"></div>
     </div>
   </div>
 
-  <!-- 3. Layout หลัก -->
-  <div class="container">
+  <!-- Profile hero (Facebook-style) -->
+  <div class="profile-wrap">
+    <div class="cover-photo" id="cover-photo">
+      <div class="cover-hint" id="cover-hint">ยังไม่ได้ตั้งรูปปกค่ะ</div>
+    </div>
+    <div class="profile-header">
+      <div class="avatar-photo" id="avatar-photo">🤍</div>
+      <div class="profile-name-block">
+        <h1>เรา 💕</h1>
+        <div class="profile-sub">สเปซส่วนตัวของเราสองคน</div>
+        <div class="profile-stats">
+          <div class="stat-chip">❤️ อยู่ด้วยกันแล้ว <b id="days-count">0</b> วัน</div>
+          <div class="stat-chip">📅 ครบรอบถัดไปอีก <b id="days-to-anniv">0</b> วัน</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Main content -->
+  <div class="container">
     <div class="sidebar-col">
-      <!-- การ์ดบอกสถานะ -->
       <div class="status-card">
         <h4>MY STATUS</h4>
         <h3 id="my-status-title">กำลังทำงาน...</h3>
@@ -407,7 +368,6 @@
         <div class="status-badge" id="my-status-time">อัปเดตเมื่อสักครู่</div>
       </div>
 
-      <!-- การ์ดนับถอยหลังวันครบรอบถัดไป -->
       <div class="anniv-card">
         <h4>NEXT ANNIVERSARY</h4>
         <div class="anniv-date" id="anniv-next-date">กำลังคำนวณ...</div>
@@ -420,71 +380,73 @@
       </div>
     </div>
 
-    <!-- กล่องแชตคุยกับ AI -->
-    <div class="chat-card" id="chat-card">
-      <div class="chat-card-header">
-        <span>💬 คุยกับเค้า</span>
-        <button class="chat-collapse-btn" id="chat-toggle-btn" onclick="toggleChat()" title="พับเก็บแชต">➖</button>
-      </div>
-      <div class="chat-messages" id="chat-box">
-        <div class="msg bot">สวัสดีค่ะยินดีต้อนรับเข้าสู่สเปซของเรานะคะ คิดถึงจัง วันนี้เป็นไงบ้างเอ่ย? 💭</div>
-      </div>
-      <div class="chat-input">
-        <input type="text" id="user-msg" placeholder="พิมพ์คุยตรงนี้ได้เลยนะคะ..." onkeydown="if(event.key==='Enter') sendMsg()">
-        <button onclick="sendMsg()">ส่ง</button>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- 6. แกลเลอรีรูปความทรงจำ -->
-  <div class="wide-section">
     <div class="gallery-card">
-      <h4>📷 รูปความทรงจำ</h4>
+      <div class="gallery-title-row">
+        <h4>📷 รูปความทรงจำ</h4>
+        <button class="btn-secondary" id="gallery-toggle-btn" onclick="toggleGalleryView()" style="display:none;">ดูรูปทั้งหมด</button>
+      </div>
       <div class="gallery-grid" id="gallery-grid">
         <span class="gallery-empty">กำลังโหลดรูป...</span>
       </div>
     </div>
   </div>
 
-  <!-- ปุ่มลอยเปิดแชตกลับมา (โผล่ตอนพับเก็บแชต) -->
-  <button id="chat-reopen-btn" onclick="toggleChat()" title="เปิดแชต">💬</button>
+  <!-- Floating messenger-style chat -->
+  <button id="chat-bubble" onclick="toggleChat()" title="คุยกับเค้า">💬</button>
+  <div id="chat-panel">
+    <div class="chat-card-header">
+      <span>💬 คุยกับเค้า</span>
+      <button class="chat-collapse-btn" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="chat-box">
+      <div class="msg bot">สวัสดีค่ะยินดีต้อนรับเข้าสู่สเปซของเรานะคะ คิดถึงจัง วันนี้เป็นไงบ้างเอ่ย? 💭</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="user-msg" placeholder="พิมพ์คุยตรงนี้ได้เลยนะคะ..." onkeydown="if(event.key==='Enter') sendMsg()">
+      <button onclick="sendMsg()">ส่ง</button>
+    </div>
+  </div>
 
-  <!-- Lightbox ดูรูปเต็มจอ -->
+  <!-- Lightbox -->
   <div id="lightbox" onclick="closeLightbox(event)">
     <button id="lightbox-close" onclick="closeLightbox(event)">✕</button>
     <img id="lightbox-img" src="" alt="">
   </div>
 
   <script>
-    const SUPABASE_URL = "https://fojmulxuinuiwzvqydsk.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvam11bHh1aW51aXd6dnF5ZHNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjI4MTIsImV4cCI6MjEwMTQzODgxMn0.iHj_S5Wz3Ka_krgh2DwvjeOMsw5V1npgxm_UHKzIveY";
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+    const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
     const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
 
-    // ชื่อ bucket ที่เก็บรูปความทรงจำใน Supabase Storage (ต้องตั้งเป็น public bucket)
+    // ชื่อ bucket เก็บรูปทั้งหมด (ต้องตั้งเป็น Public bucket ใน Supabase Storage settings)
     const PHOTO_BUCKET = "photos";
+    // ชื่อไฟล์คงที่สำหรับรูปปกและรูปโปรไฟล์ (อัปโหลดทับของเดิมได้เรื่อยๆ)
+    const COVER_FILE = "cover.jpg";
+    const AVATAR_FILE = "avatar.jpg";
+    const RESERVED_FILES = [COVER_FILE, AVATAR_FILE];
 
     let sb = null;
     if (SUPABASE_URL !== "YOUR_SUPABASE_URL") {
       sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
-    const START_DATE = new Date("2025-01-17");
+    function publicPhotoUrl(fileName) {
+      // สร้าง public URL เอง พร้อม encode ชื่อไฟล์ กันปัญหาไฟล์ชื่อมีเว้นวรรค/อักขระพิเศษแล้วรูปไม่ขึ้น
+      return `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${encodeURIComponent(fileName)}`;
+    }
+
+    const START_DATE = new Date("2024-01-01");
 
     function updateAnniversary() {
       const now = new Date();
-      const diffTime = Math.abs(now - START_DATE);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const diffDays = Math.ceil(Math.abs(now - START_DATE) / (1000 * 60 * 60 * 24));
       document.getElementById('days-count').innerText = diffDays;
     }
 
-    // --- นับถอยหลังวันครบรอบถัดไป ---
     function getNextAnniversary() {
       const now = new Date();
       let next = new Date(now.getFullYear(), START_DATE.getMonth(), START_DATE.getDate(), 0, 0, 0);
-      if (next < now) {
-        next = new Date(now.getFullYear() + 1, START_DATE.getMonth(), START_DATE.getDate(), 0, 0, 0);
-      }
+      if (next < now) next = new Date(now.getFullYear() + 1, START_DATE.getMonth(), START_DATE.getDate(), 0, 0, 0);
       return next;
     }
 
@@ -502,13 +464,12 @@
       document.getElementById('cd-hours').innerText = hours;
       document.getElementById('cd-mins').innerText = mins;
       document.getElementById('cd-secs').innerText = secs;
+      document.getElementById('days-to-anniv').innerText = days;
 
       const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-      document.getElementById('anniv-next-date').innerText =
-        "📅 " + next.toLocaleDateString('th-TH', dateOptions);
+      document.getElementById('anniv-next-date').innerText = "📅 " + next.toLocaleDateString('th-TH', dateOptions);
     }
 
-    // --- ตรวจว่าวันนี้ตรงกับวันครบรอบไหม แสดงหน้าพิเศษครั้งแรกของวัน ---
     function isTodayAnniversary() {
       const now = new Date();
       return now.getMonth() === START_DATE.getMonth() && now.getDate() === START_DATE.getDate();
@@ -516,14 +477,11 @@
 
     function checkAnniversaryToday() {
       if (!isTodayAnniversary()) return;
-
       const todayKey = new Date().toISOString().slice(0, 10);
-      const lastShown = localStorage.getItem('annivShownDate');
-      if (lastShown === todayKey) return; // โชว์ไปแล้ววันนี้
+      if (localStorage.getItem('annivShownDate') === todayKey) return;
 
       const years = new Date().getFullYear() - START_DATE.getFullYear();
       document.getElementById('anniv-years-count').innerText = years + " ปี";
-
       document.getElementById('anniversary-overlay').style.display = 'flex';
       spawnConfetti();
       localStorage.setItem('annivShownDate', todayKey);
@@ -553,33 +511,26 @@
         const data = await res.json();
         const code = data.current_weather.weathercode;
         const temp = data.current_weather.temperature;
-
         let weatherText = `🌤️ ${temp}°C`;
         let careMsg = "วันนี้อากาศดี ดูแลสุขภาพด้วยนะคะ";
-
         if ([51, 53, 55, 61, 63, 65, 80, 81, 82, 95].includes(code)) {
           weatherText = `🌧️ ฝนตก (${temp}°C)`;
           careMsg = "พกร่มด้วยนะคะ อย่าตากฝนน้า 🥺";
         }
-
         document.getElementById('weather-box').innerHTML = `📍 นครพนม: ${weatherText}<br><span style="color:#e53e3e;">${careMsg}</span>`;
       } catch (e) {
         document.getElementById('weather-box').innerText = "📍 นครพนม";
       }
     }
 
-    // --- Smile Gate System ---
+    // --- Smile Gate ---
     let scanInterval = null;
 
     function closeGate() {
       const gate = document.getElementById('smile-gate');
       gate.style.opacity = '0';
-      setTimeout(() => {
-        gate.style.display = 'none';
-        checkAnniversaryToday();
-      }, 500);
+      setTimeout(() => { gate.style.display = 'none'; checkAnniversaryToday(); }, 500);
     }
-
     function bypassGate() {
       if (scanInterval) clearInterval(scanInterval);
       closeGate();
@@ -589,48 +540,32 @@
       const video = document.getElementById('video');
       const status = document.getElementById('gate-status');
       const startBtn = document.getElementById('start-cam-btn');
-
       startBtn.style.display = 'none';
       status.innerText = "กำลังขออนุญาตเปิดกล้อง...";
-
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 320, height: 240, facingMode: "user" }
-        });
-
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, facingMode: "user" } });
         video.srcObject = stream;
         await video.play();
-
         status.innerText = "กำลังโหลดระบบ AI...";
-
         const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
         await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
         await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-
         status.innerText = "มองกล้องแล้วยิ้มหวานๆ หน่อยน้า 😊";
-
         scanInterval = setInterval(async () => {
           try {
-            const detections = await faceapi.detectAllFaces(
-              video,
-              new faceapi.TinyFaceDetectorOptions()
-            ).withFaceExpressions();
-
+            const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
             if (detections && detections.length > 0) {
               const happyScore = detections[0].expressions.happy;
-
               if (happyScore > 0.5) {
                 status.innerText = "✨ รอยยิ้มผ่านแล้ว! ยินดีต้อนรับนะคะ 🎉";
                 status.style.color = "#38a169";
                 clearInterval(scanInterval);
-
                 stream.getTracks().forEach(track => track.stop());
                 setTimeout(closeGate, 800);
               }
             }
           } catch(e) { console.log("Scanning...", e); }
         }, 400);
-
       } catch (err) {
         console.error("Smile Gate Error:", err);
         startBtn.style.display = 'block';
@@ -645,52 +580,82 @@
       try {
         const { data: songs } = await sb.from('settings').select('value').eq('key', 'active_song').single();
         if (songs) document.getElementById('bg-music').src = songs.value;
+      } catch (e) { /* ยังไม่ตั้งเพลง ไม่เป็นไร */ }
 
+      try {
         const { data: status } = await sb.from('my_status').select('*').order('created_at', { ascending: false }).limit(1).single();
         if (status) {
           document.getElementById('my-status-title').innerText = status.title;
           document.getElementById('my-status-detail').innerText = status.detail;
           document.getElementById('my-status-time').innerText = "อัปเดตเมื่อ: " + new Date(status.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }
+      } catch (e) { console.log("Status not set yet."); }
+    }
+
+    // --- โหลดรูปปก / รูปโปรไฟล์ ---
+    function loadProfileImages() {
+      if (!sb) return;
+      const coverEl = document.getElementById('cover-photo');
+      const coverHint = document.getElementById('cover-hint');
+      const testCover = new Image();
+      testCover.onload = () => { coverEl.style.backgroundImage = `url('${publicPhotoUrl(COVER_FILE)}')`; coverHint.style.display = 'none'; };
+      testCover.onerror = () => { coverHint.style.display = 'flex'; };
+      testCover.src = publicPhotoUrl(COVER_FILE);
+
+      const avatarEl = document.getElementById('avatar-photo');
+      const testAvatar = new Image();
+      testAvatar.onload = () => { avatarEl.style.backgroundImage = `url('${publicPhotoUrl(AVATAR_FILE)}')`; avatarEl.innerText = ''; };
+      testAvatar.onerror = () => { /* ใช้ไอคอนหัวใจแทนถ้ายังไม่มีรูป */ };
+      testAvatar.src = publicPhotoUrl(AVATAR_FILE);
+    }
+
+    // --- แกลเลอรีรูปความทรงจำ ---
+    let allGalleryItems = [];
+    let galleryExpanded = false;
+    const GALLERY_PREVIEW_COUNT = 9;
+
+    async function loadGallery() {
+      const grid = document.getElementById('gallery-grid');
+      if (!sb) { grid.innerHTML = '<span class="gallery-empty">ยังไม่ได้เชื่อมต่อ Supabase ค่ะ</span>'; return; }
+      try {
+        const { data: files, error } = await sb.storage.from(PHOTO_BUCKET).list('', { limit: 200, sortBy: { column: 'created_at', order: 'desc' } });
+        if (error) throw error;
+
+        allGalleryItems = (files || []).filter(f => f.name && !f.name.startsWith('.') && !RESERVED_FILES.includes(f.name));
+
+        if (allGalleryItems.length === 0) {
+          grid.innerHTML = '<span class="gallery-empty">ยังไม่มีรูปเลยค่ะ 🥺</span>';
+          document.getElementById('gallery-toggle-btn').style.display = 'none';
+          return;
+        }
+        renderGallery();
+        document.getElementById('gallery-toggle-btn').style.display = allGalleryItems.length > GALLERY_PREVIEW_COUNT ? 'inline-block' : 'none';
       } catch (e) {
-        console.log("Database not configured yet.");
+        console.log("Gallery load error:", e);
+        grid.innerHTML = '<span class="gallery-empty">โหลดรูปไม่สำเร็จ เช็คว่า bucket "photos" ตั้งเป็น Public แล้วหรือยังนะคะ</span>';
       }
     }
 
-    // --- แกลเลอรีรูปความทรงจำ (ดึงจาก Supabase Storage bucket) ---
-    async function loadGallery() {
+    function renderGallery() {
       const grid = document.getElementById('gallery-grid');
-      if (!sb) {
-        grid.innerHTML = '<span class="gallery-empty">ยังไม่ได้เชื่อมต่อ Supabase ค่ะ</span>';
-        return;
-      }
-      try {
-        const { data: files, error } = await sb.storage.from(PHOTO_BUCKET).list('', {
-          limit: 100,
-          sortBy: { column: 'created_at', order: 'desc' }
-        });
-        if (error) throw error;
+      grid.innerHTML = '';
+      const itemsToShow = galleryExpanded ? allGalleryItems : allGalleryItems.slice(0, GALLERY_PREVIEW_COUNT);
+      itemsToShow.forEach(file => {
+        const url = publicPhotoUrl(file.name);
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = file.name;
+        img.loading = 'lazy';
+        img.onclick = () => openLightbox(url);
+        img.onerror = () => { img.style.display = 'none'; };
+        grid.appendChild(img);
+      });
+    }
 
-        const images = (files || []).filter(f => f.name && !f.name.startsWith('.'));
-        if (images.length === 0) {
-          grid.innerHTML = '<span class="gallery-empty">ยังไม่มีรูปเลยค่ะ 🥺</span>';
-          return;
-        }
-
-        grid.innerHTML = '';
-        images.forEach(file => {
-          const { data: pub } = sb.storage.from(PHOTO_BUCKET).getPublicUrl(file.name);
-          const img = document.createElement('img');
-          img.src = pub.publicUrl;
-          img.alt = file.name;
-          img.loading = 'lazy';
-          img.onclick = () => openLightbox(pub.publicUrl);
-          grid.appendChild(img);
-        });
-      } catch (e) {
-        console.log("Gallery load error:", e);
-        grid.innerHTML = '<span class="gallery-empty">โหลดรูปไม่สำเร็จ ลองใหม่อีกครั้งนะคะ</span>';
-      }
+    function toggleGalleryView() {
+      galleryExpanded = !galleryExpanded;
+      document.getElementById('gallery-toggle-btn').innerText = galleryExpanded ? 'ย่อรูป' : 'ดูรูปทั้งหมด';
+      renderGallery();
     }
 
     function openLightbox(url) {
@@ -702,76 +667,63 @@
       document.getElementById('lightbox').classList.remove('show');
     }
 
-    // --- พับ/เปิด กล่องแชต ---
+    // --- Floating chat toggle ---
     function toggleChat() {
-      const card = document.getElementById('chat-card');
-      const reopenBtn = document.getElementById('chat-reopen-btn');
-      const toggleBtn = document.getElementById('chat-toggle-btn');
-      const collapsed = card.classList.toggle('collapsed');
-      reopenBtn.classList.toggle('show', collapsed);
-      toggleBtn.innerText = collapsed ? '⬆️' : '➖';
+      document.getElementById('chat-panel').classList.toggle('show');
     }
 
     function toggleMusic() {
       const audio = document.getElementById('bg-music');
       const btn = document.getElementById('music-btn');
-      if (!audio.src) {
-        alert("ยังไม่ได้ตั้งค่าเพลงหลังบ้านค่ะ");
-        return;
-      }
-      if (audio.paused) {
-        audio.play();
-        btn.innerText = "⏸️ พักเพลง";
-      } else {
-        audio.pause();
-        btn.innerText = "🎵 เล่นเพลง";
-      }
+      if (!audio.src) { alert("ยังไม่ได้ตั้งค่าเพลงหลังบ้านค่ะ"); return; }
+      if (audio.paused) { audio.play(); btn.innerText = "⏸️ พักเพลง"; }
+      else { audio.pause(); btn.innerText = "🎵 เล่นเพลง"; }
     }
 
-    // --- แผงแอดมิน: อัปเดตสถานะ / อัปโหลดรูป (เห็นเฉพาะ ?admin=1) ---
+    // --- Admin panel ---
     function initAdminPanel() {
       const params = new URLSearchParams(window.location.search);
-      if (params.get('admin') === '1') {
-        document.getElementById('admin-panel').classList.add('show');
-      }
+      if (params.get('admin') === '1') document.getElementById('admin-panel').classList.add('show');
     }
 
     async function updateStatus() {
       const msgBox = document.getElementById('admin-status-msg');
       if (!sb) { msgBox.innerText = "ยังไม่ได้เชื่อมต่อ Supabase ค่ะ"; return; }
-
       const title = document.getElementById('admin-status-title').value.trim();
       const detail = document.getElementById('admin-status-detail').value.trim();
       if (!title) { msgBox.innerText = "ใส่หัวข้อสถานะก่อนนะคะ"; return; }
-
       msgBox.innerText = "กำลังบันทึก...";
       const { error } = await sb.from('my_status').insert([{ title, detail }]);
-      if (error) {
-        msgBox.innerText = "บันทึกไม่สำเร็จ: " + error.message;
-      } else {
-        msgBox.innerText = "✅ อัปเดตสถานะเรียบร้อยค่ะ";
-        loadBackendData();
-      }
+      msgBox.innerText = error ? ("บันทึกไม่สำเร็จ: " + error.message) : "✅ อัปเดตสถานะเรียบร้อยค่ะ";
+      if (!error) loadBackendData();
     }
 
     async function uploadPhoto() {
       const msgBox = document.getElementById('admin-status-msg');
       if (!sb) { msgBox.innerText = "ยังไม่ได้เชื่อมต่อ Supabase ค่ะ"; return; }
-
       const fileInput = document.getElementById('admin-photo-file');
       const file = fileInput.files[0];
       if (!file) { msgBox.innerText = "เลือกไฟล์รูปก่อนนะคะ"; return; }
-
       msgBox.innerText = "กำลังอัปโหลด...";
-      const fileName = `${Date.now()}_${file.name}`;
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const fileName = `${Date.now()}_${safeName}`;
       const { error } = await sb.storage.from(PHOTO_BUCKET).upload(fileName, file);
-      if (error) {
-        msgBox.innerText = "อัปโหลดไม่สำเร็จ: " + error.message;
-      } else {
-        msgBox.innerText = "✅ อัปโหลดรูปเรียบร้อยค่ะ";
-        fileInput.value = '';
-        loadGallery();
-      }
+      if (error) { msgBox.innerText = "อัปโหลดไม่สำเร็จ: " + error.message; }
+      else { msgBox.innerText = "✅ อัปโหลดรูปเรียบร้อยค่ะ"; fileInput.value = ''; loadGallery(); }
+    }
+
+    async function uploadProfileImage(kind) {
+      const msgBox = document.getElementById('admin-status-msg');
+      if (!sb) { msgBox.innerText = "ยังไม่ได้เชื่อมต่อ Supabase ค่ะ"; return; }
+      const inputId = kind === 'cover' ? 'admin-cover-file' : 'admin-avatar-file';
+      const targetName = kind === 'cover' ? COVER_FILE : AVATAR_FILE;
+      const fileInput = document.getElementById(inputId);
+      const file = fileInput.files[0];
+      if (!file) { msgBox.innerText = "เลือกไฟล์รูปก่อนนะคะ"; return; }
+      msgBox.innerText = "กำลังอัปโหลด...";
+      const { error } = await sb.storage.from(PHOTO_BUCKET).upload(targetName, file, { upsert: true });
+      if (error) { msgBox.innerText = "อัปโหลดไม่สำเร็จ: " + error.message; }
+      else { msgBox.innerText = "✅ อัปเดตรูปเรียบร้อยค่ะ"; fileInput.value = ''; loadProfileImages(); }
     }
 
     const SYSTEM_PROMPT = `คุณคือ AI ตัวแทนแฟนหนุ่ม (นักศึกษาวิศวะคอมฯ/IT ชอบทำโปรเจกต์ ลอจิกแน่น เล่นเกม Minecraft มีความกวนๆ ติดเล่น แต่ใจดีและอบอุ่น)
@@ -784,7 +736,6 @@
       const input = document.getElementById('user-msg');
       const text = input.value.trim();
       if (!text) return;
-
       appendMsg(text, 'user');
       input.value = '';
       chatHistory.push({ role: "user", parts: [{ text }] });
@@ -793,21 +744,16 @@
         setTimeout(() => appendMsg("ยังไม่ได้ใส่ GEMINI_API_KEY ในโค้ดนะคะ 🥺", 'bot'), 500);
         return;
       }
-
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-            contents: chatHistory
-          })
+          body: JSON.stringify({ system_instruction: { parts: [{ text: SYSTEM_PROMPT }] }, contents: chatHistory })
         });
         const data = await res.json();
         const reply = data.candidates[0].content.parts[0].text;
         appendMsg(reply, 'bot');
         chatHistory.push({ role: "model", parts: [{ text: reply }] });
-
         if (sb) await sb.from('chat_logs').insert([{ user_msg: text, bot_reply: reply }]);
       } catch (e) {
         appendMsg("ขออภัยนะคนเก่ง ระบบ AI ขัดข้องชั่วคราวค่ะ 🥺", 'bot');
@@ -829,6 +775,7 @@
       setInterval(updateAnniversaryCountdown, 1000);
       fetchNakhonPhanomWeather();
       loadBackendData();
+      loadProfileImages();
       loadGallery();
       initAdminPanel();
     });
